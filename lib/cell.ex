@@ -13,7 +13,7 @@ defmodule Sudoku.Cell do
       9
       iex> Sudoku.Cell.has_known_value?(cell)
       false
-      
+
       ## Start out with a known value
       iex> cell = Sudoku.Cell.with_known_value(6)
       [6]
@@ -21,6 +21,8 @@ defmodule Sudoku.Cell do
       1
       iex> Sudoku.Cell.has_known_value?(cell)
       true
+      iex> Sudoku.Cell.value_of(cell)
+      6
   """
 
     @domain_size 9
@@ -48,5 +50,10 @@ defmodule Sudoku.Cell do
     @doc "Create a new cell with a given known value"
     def with_known_value(value) do
         [ value ]
+    end
+
+    @doc "Return the value of the cell. Only valid if the value of the cell is known."
+    def value_of(cell) do
+        List.first(cell)
     end
 end
