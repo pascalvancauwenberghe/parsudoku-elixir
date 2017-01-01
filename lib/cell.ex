@@ -16,4 +16,8 @@ defmodule Sudoku.Cell do
     def size_of_domain do
         @domain_size
     end
+
+    def has_known_value?(cell) do
+        number_of_possible_values(cell) == 1
+    end
 end
