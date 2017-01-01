@@ -13,6 +13,8 @@ defmodule Sudoku.Cell do
       9
       iex> Sudoku.Cell.has_known_value?(cell)
       false
+      iex> Enum.map(1..Sudoku.Cell.size_of_domain,fn(value) -> Sudoku.Cell.can_have_value?(cell,value) end)
+      [true, true, true, true, true, true, true, true, true]
 
       ## Start out with a known value
       iex> cell = Sudoku.Cell.with_known_value(6)
@@ -55,5 +57,10 @@ defmodule Sudoku.Cell do
     @doc "Return the value of the cell. Only valid if the value of the cell is known."
     def value_of(cell) do
         List.first(cell)
+    end
+
+    @doc "Returns whether the given value is still possible in the cell"
+    def can_have_value?(cell,value) do
+        Enum.any?(cell,fn(x) -> x == value end)
     end
 end
