@@ -34,4 +34,12 @@ defmodule CellTest do
 
     Enum.each(1..Sudoku.Cell.size_of_domain,fn(value) -> assert Sudoku.Cell.can_have_value?(cell,value) == (value == known) end)
   end
+
+  test "can remove a possibility from a cell" do
+    cell = Sudoku.Cell.new_cell
+    cell = Sudoku.Cell.cant_have_value(cell,3)
+    assert Sudoku.Cell.number_of_possible_values(cell) == 8
+    assert Sudoku.Cell.can_have_value?(cell,3) == false
+    assert Sudoku.Cell.can_have_value?(cell,4) == true
+  end
 end

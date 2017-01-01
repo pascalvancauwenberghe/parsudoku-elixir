@@ -15,6 +15,8 @@ defmodule Sudoku.Cell do
       false
       iex> Enum.map(1..Sudoku.Cell.size_of_domain,fn(value) -> Sudoku.Cell.can_have_value?(cell,value) end)
       [true, true, true, true, true, true, true, true, true]
+      iex> Sudoku.Cell.cant_have_value(cell,4)
+      [1, 2, 3, 5, 6, 7, 8, 9]
 
       ## Start out with a known value
       iex> cell = Sudoku.Cell.with_known_value(6)
@@ -62,5 +64,10 @@ defmodule Sudoku.Cell do
     @doc "Returns whether the given value is still possible in the cell"
     def can_have_value?(cell,value) do
         Enum.any?(cell,fn(x) -> x == value end)
+    end
+
+    @doc "Remove the given value from the possible values in the cell"
+    def cant_have_value(cell,value) do
+        List.delete(cell,value)
     end
 end
