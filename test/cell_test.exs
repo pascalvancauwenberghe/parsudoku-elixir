@@ -11,4 +11,10 @@ defmodule CellTest do
       cell = Sudoku.Cell.new_cell
       assert Sudoku.Cell.has_known_value?(cell) == false
     end
+
+    test "a cell's value can be set to a known value" do
+      cell = Sudoku.Cell.with_known_value(5)
+      assert Sudoku.Cell.has_known_value?(cell) == true
+    end
+
 end
