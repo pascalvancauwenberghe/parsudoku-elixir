@@ -25,7 +25,13 @@ defmodule Sudoku.Grid do
 
   @doc "Return a grid with a Cell with the given value at the [row,column] coordinates"
   def has_known_value(grid,row,column,value) do
-    List.replace_at(grid,slot(row,column),Sudoku.Cell.with_known_value(value))
+    for the_row <- 1..3 , the_column <- 1..3 do
+      if the_row == row && the_column == column do
+        Sudoku.Cell.with_known_value(value)
+      else
+        Sudoku.Grid.cell(grid,the_row,the_column) |> Sudoku.Cell.cant_have_value(value)
+      end
+    end
   end
 
   @doc "Return the Cell at the [row,column] coordinates"
