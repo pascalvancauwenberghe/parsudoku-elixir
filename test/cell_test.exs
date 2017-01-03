@@ -4,7 +4,7 @@ defmodule CellTest do
 
   test "a cell starts with all possibilities" do
     cell = Sudoku.Cell.new
-    assert Sudoku.Cell.number_of_possible_values(cell) == Sudoku.Cell.size_of_domain
+    assert Sudoku.Cell.number_of_possible_values(cell) == Sudoku.Domain.size
   end
 
   test "a cell with all possibilities has an unknown value" do
@@ -25,14 +25,14 @@ defmodule CellTest do
   test "all values are possible for a new cell" do
     cell =  Sudoku.Cell.new
 
-    Enum.each(Sudoku.Cell.domain,fn(value) -> assert Sudoku.Cell.can_have_value?(cell,value) end)
+    Enum.each(Sudoku.Domain.values,fn(value) -> assert Sudoku.Cell.can_have_value?(cell,value) end)
   end
 
   test "only the known value is possible for a cell with known value" do
     known = 4
     cell =  Sudoku.Cell.with_known_value(known)
 
-    Enum.each(1..Sudoku.Cell.size_of_domain,fn(value) -> assert Sudoku.Cell.can_have_value?(cell,value) == (value == known) end)
+    Enum.each(Sudoku.Domain.values,fn(value) -> assert Sudoku.Cell.can_have_value?(cell,value) == (value == known) end)
   end
 
   test "can remove a possibility from a cell" do

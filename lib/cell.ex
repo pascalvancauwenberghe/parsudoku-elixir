@@ -9,13 +9,13 @@ defmodule Sudoku.Cell do
       ## Start out with default: all values from the domain are possible
       iex> cell = Sudoku.Cell.new
       [1, 2, 3, 4, 5, 6, 7, 8, 9]
-      iex> cell == Sudoku.Cell.domain
+      iex> cell == Sudoku.Domain.values
       true
       iex> Sudoku.Cell.number_of_possible_values(cell)
       9
       iex> Sudoku.Cell.has_known_value?(cell)
       false
-      iex> Enum.map(1..Sudoku.Cell.size_of_domain,fn(value) -> Sudoku.Cell.can_have_value?(cell,value) end)
+      iex> Enum.map(Sudoku.Domain.values,fn(value) -> Sudoku.Cell.can_have_value?(cell,value) end)
       [true, true, true, true, true, true, true, true, true]
       iex> Sudoku.Cell.cant_have_value(cell,4)
       [1, 2, 3, 5, 6, 7, 8, 9]
@@ -31,19 +31,9 @@ defmodule Sudoku.Cell do
       6
   """
 
-    @doc "The number of different values in the domain"
-    def size_of_domain do
-        Sudoku.Domain.size
-    end
-
-    @doc "The possible values of the domain"
-    def domain do
-      Sudoku.Domain.values
-    end
-
     @doc "Constructor: Create a new cell that can have all possible values in the domain"
     def new do
-        @domain
+        Sudoku.Domain.values
     end
 
     @doc "Constructor: Create a new cell with a given known value"
