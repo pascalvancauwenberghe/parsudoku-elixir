@@ -34,6 +34,6 @@ defmodule Sudoku.Grid do
   end
 
   defp slot(row,column) do
-    row * @columns + column
+    (row-1) * @columns + (column-1)
   end
 end
