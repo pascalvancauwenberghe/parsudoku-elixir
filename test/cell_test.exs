@@ -3,12 +3,12 @@ defmodule CellTest do
   doctest Sudoku.Cell
 
   test "a cell starts with all possibilities" do
-    cell = Sudoku.Cell.new_cell
+    cell = Sudoku.Cell.new
     assert Sudoku.Cell.number_of_possible_values(cell) == Sudoku.Cell.size_of_domain
   end
 
   test "a cell with all possibilities has an unknown value" do
-    cell = Sudoku.Cell.new_cell
+    cell = Sudoku.Cell.new
     assert Sudoku.Cell.has_known_value?(cell) == false
   end
 
@@ -23,7 +23,7 @@ defmodule CellTest do
   end
 
   test "all values are possible for a new cell" do
-    cell =  Sudoku.Cell.new_cell
+    cell =  Sudoku.Cell.new
 
     Enum.each(1..Sudoku.Cell.size_of_domain,fn(value) -> assert Sudoku.Cell.can_have_value?(cell,value) end)
   end
@@ -36,7 +36,7 @@ defmodule CellTest do
   end
 
   test "can remove a possibility from a cell" do
-    cell = Sudoku.Cell.new_cell
+    cell = Sudoku.Cell.new
     cell = Sudoku.Cell.cant_have_value(cell,3)
     assert Sudoku.Cell.number_of_possible_values(cell) == 8
     assert Sudoku.Cell.can_have_value?(cell,3) == false
