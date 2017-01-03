@@ -8,6 +8,12 @@ defmodule Sudoku.Grid do
       iex> grid = Sudoku.Grid.has_known_value(grid,1,3,5)
       iex> Sudoku.Grid.cell(grid,1,3) |> Sudoku.Cell.value_of
       5
+
+      iex> Sudoku.Grid.rows
+      1..3
+      iex> Sudoku.Grid.columns
+      1..3
+ 
   """
 
   @rows  3
@@ -25,7 +31,7 @@ defmodule Sudoku.Grid do
 
   @doc "Return a grid with a Cell with the given value at the [row,column] coordinates"
   def has_known_value(grid,row,column,value) do
-    for the_row <- 1..3 , the_column <- 1..3 do
+    for the_row <- rows , the_column <- columns do
       if the_row == row && the_column == column do
         Sudoku.Cell.with_known_value(value)
       else
@@ -43,6 +49,16 @@ defmodule Sudoku.Grid do
   def cant_have_value(grid,row,column,value) do
     cell = cell(grid,row,column) |> Sudoku.Cell.cant_have_value(value)
     List.replace_at(grid,slot(row,column),cell)
+  end
+
+  @doc "Return all row indices"
+  def rows do
+    1..@rows
+  end
+
+  @doc "Return all column indices"
+  def columns do
+    1..@columns
   end
 
   defp slot(row,column) do

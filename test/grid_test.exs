@@ -37,11 +37,13 @@ defmodule GridTest do
   end
 
   test "when a cell's value is known, no other cell in the grid may have that value" do
-    grid = Sudoku.Grid.new |> Sudoku.Grid.has_known_value(2,3,5)
+    for row <- Sudoku.Grid.rows, column <- Sudoku.Grid.columns, value <- Sudoku.Domain.values do
+      grid = Sudoku.Grid.new |> Sudoku.Grid.has_known_value(row,column,value)
 
-    for the_row <- 1..3 , the_column <- 1..3, the_row != 2, the_column != 3 do
-      cell = Sudoku.Grid.cell(grid,the_row,the_column)
-      assert !Sudoku.Cell.can_have_value?(cell,5) 
+      for the_row <- Sudoku.Grid.rows, the_column <- Sudoku.Grid.columns do
+        cell = Sudoku.Grid.cell(grid,the_row,the_column)
+        assert Sudoku.Cell.can_have_value?(cell,value) == (the_row == row && the_column == column)
+      end
     end
   end
 
