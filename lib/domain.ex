@@ -1,5 +1,6 @@
 defmodule Sudoku.Domain do
     @moduledoc """
+      The domain represents the universe from which possible values of a constraint satisfaction variable are taken
     """
 
     @domain [1,2,3,4,5,6,7,8,9]
