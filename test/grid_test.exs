@@ -1,4 +1,4 @@
-defmodule GridGridTest do
+defmodule GridTest do
   use ExUnit.Case
   doctest Sudoku.Grid
 
