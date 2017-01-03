@@ -33,6 +33,12 @@ defmodule Sudoku.Grid do
     Enum.at(grid,slot(row,column))
   end
 
+  @doc "Return a grid with a Cell at [row,column] that can't have the given value"
+  def cant_have_value(grid,row,column,value) do
+    cell = cell(grid,row,column) |> Sudoku.Cell.cant_have_value(value)
+    List.replace_at(grid,slot(row,column),cell)
+  end
+
   defp slot(row,column) do
     (row-1) * @columns + (column-1)
   end

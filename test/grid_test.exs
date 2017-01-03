@@ -29,4 +29,11 @@ defmodule GridTest do
     assert Sudoku.Grid.solved?(grid) == true
 
   end
+
+  test "can reduce the set of possible values of a Cell" do
+    grid = Sudoku.Grid.new |> Sudoku.Grid.cant_have_value(1,2,3)
+
+    assert Sudoku.Cell.can_have_value?(Sudoku.Grid.cell(grid,1,2),3) == false 
+  end
+
 end
