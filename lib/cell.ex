@@ -29,11 +29,11 @@ defmodule Sudoku.Cell do
       6
   """
 
-    @domain_size 9
+    @domain [1,2,3,4,5,6,7,8,9]
 
     @doc "Create a new cell that can have all possible values in the domain"
     def new_cell do
-        Enum.into(1..@domain_size,[])
+        @domain
     end
 
     @doc "How many values are possible in this cell?"
@@ -43,7 +43,7 @@ defmodule Sudoku.Cell do
 
     @doc "The number of different values in the domain"
     def size_of_domain do
-        @domain_size
+        length(@domain)
     end
 
     @doc "A cell has a known value if only one possibility is left"
