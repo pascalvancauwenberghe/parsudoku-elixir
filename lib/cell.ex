@@ -31,16 +31,14 @@ defmodule Sudoku.Cell do
       6
   """
 
-    @domain [1,2,3,4,5,6,7,8,9]
-    
     @doc "The number of different values in the domain"
     def size_of_domain do
-        length(@domain)
+        Sudoku.Domain.size
     end
 
     @doc "The possible values of the domain"
     def domain do
-      @domain
+      Sudoku.Domain.values
     end
 
     @doc "Constructor: Create a new cell that can have all possible values in the domain"
