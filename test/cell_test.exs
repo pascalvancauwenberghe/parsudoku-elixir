@@ -25,7 +25,7 @@ defmodule CellTest do
   test "all values are possible for a new cell" do
     cell =  Sudoku.Cell.new
 
-    Enum.each(1..Sudoku.Cell.size_of_domain,fn(value) -> assert Sudoku.Cell.can_have_value?(cell,value) end)
+    Enum.each(Sudoku.Cell.domain,fn(value) -> assert Sudoku.Cell.can_have_value?(cell,value) end)
   end
 
   test "only the known value is possible for a cell with known value" do

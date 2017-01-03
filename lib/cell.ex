@@ -9,6 +9,8 @@ defmodule Sudoku.Cell do
       ## Start out with default: all values from the domain are possible
       iex> cell = Sudoku.Cell.new
       [1, 2, 3, 4, 5, 6, 7, 8, 9]
+      iex> cell == Sudoku.Cell.domain
+      true
       iex> Sudoku.Cell.number_of_possible_values(cell)
       9
       iex> Sudoku.Cell.has_known_value?(cell)
@@ -30,6 +32,16 @@ defmodule Sudoku.Cell do
   """
 
     @domain [1,2,3,4,5,6,7,8,9]
+    
+    @doc "The number of different values in the domain"
+    def size_of_domain do
+        length(@domain)
+    end
+
+    @doc "The possible values of the domain"
+    def domain do
+      @domain
+    end
 
     @doc "Constructor: Create a new cell that can have all possible values in the domain"
     def new do
@@ -44,11 +56,6 @@ defmodule Sudoku.Cell do
     @doc "How many values are possible in this cell?"
     def number_of_possible_values(cell) do
         length(cell)
-    end
-
-    @doc "The number of different values in the domain"
-    def size_of_domain do
-        length(@domain)
     end
 
     @doc "A cell has a known value if only one possibility is left"
