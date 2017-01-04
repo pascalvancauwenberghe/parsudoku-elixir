@@ -8,6 +8,8 @@ defmodule Sudoku.Grid do
       iex> grid = Sudoku.Grid.has_known_value(grid,1,3,5)
       iex> Sudoku.Grid.cell(grid,1,3) |> Sudoku.Cell.value_of
       5
+      iex> Sudoku.Grid.known_values(grid)
+      [{1,3,5}]
 
       iex> Sudoku.Grid.rows
       1..3
@@ -53,6 +55,17 @@ defmodule Sudoku.Grid do
     else
       List.replace_at(grid,slot(row,column),cell)
     end
+  end
+  
+  @doc "Return a list of {row,column,value} for each cell with a known value"
+  def known_values(grid) do
+     values = for row <- rows , column <- columns do
+       cell = Sudoku.Grid.cell(grid,row,column)
+       if Sudoku.Cell.has_known_value?(cell) do
+         { row, column, Sudoku.Cell.value_of(cell) }
+       end
+    end
+    Enum.filter(values,fn (value) -> value != nil end)
   end
 
   @doc "Return all row indices"

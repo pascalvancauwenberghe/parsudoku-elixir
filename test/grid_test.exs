@@ -65,4 +65,19 @@ defmodule GridTest do
   
   end
 
+  test "a new grid has no known values" do
+    grid = Sudoku.Grid.new
+
+    assert Sudoku.Grid.known_values(grid) == []
+  end
+  
+  test "a grid knows which Cell values are known" do
+    grid = Sudoku.Grid.new
+    |> Sudoku.Grid.has_known_value(1,2,9)
+    |> Sudoku.Grid.has_known_value(2,3,8)
+    |> Sudoku.Grid.has_known_value(3,1,7)
+
+    assert Sudoku.Grid.known_values(grid) == [{1,2,9} , {2,3,8} , {3,1,7} ]
+  end
+
 end
