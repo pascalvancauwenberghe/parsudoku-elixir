@@ -12,15 +12,19 @@ defmodule Sudoku.Cell do
       3
       iex> Sudoku.Cell.column(cell)
       2
-      iex> Sudoku.Cell.number_of_possible_values(cell)
-      9
+      iex> Sudoku.Cell.number_of_possible_values(cell) == Sudoku.Domain.size
+      true
       iex> Sudoku.Cell.has_known_value?(cell)
       false
       iex> Enum.map(Sudoku.Domain.values,fn(value) -> Sudoku.Cell.can_have_value?(cell,value) end)
       [true, true, true, true, true, true, true, true, true]
+
+      iex> cell = Sudoku.Cell.new(3,2)
       iex> cell = Sudoku.Cell.cant_have_value(cell,4)
-      iex> Sudoku.Cell.number_of_possible_values(cell)
-      8
+      iex> Sudoku.Cell.number_of_possible_values(cell) == Sudoku.Domain.size-1
+      true
+      iex> Enum.map(Sudoku.Domain.values,fn(value) -> Sudoku.Cell.can_have_value?(cell,value) end)
+      [true, true, true, false, true, true, true, true, true]
 
       ## Start out with a known value
       iex> cell = Sudoku.Cell.with_known_value(2,1,6)
