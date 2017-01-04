@@ -75,11 +75,13 @@ defmodule Sudoku.Cell do
         {row,column,List.delete(values,value)}
     end
 
+    @doc "Return the column (X) coordinate of the Cell"
     def column(cell) do
       {_row,column,_values} = cell
       column
     end
 
+    @doc "Return the row (Y) coordinate of the Cell"
     def row(cell) do
       {row,_column,_values} = cell
       row
