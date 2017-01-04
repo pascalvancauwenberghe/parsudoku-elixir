@@ -24,7 +24,7 @@ defmodule Sudoku.Grid do
   @doc "Constructor: create a 3x3 Cell section of a Sudoku puzzle"
   def new do
     for the_row <- rows , the_column <- columns do
-     { the_row, the_column , Sudoku.Cell.new }
+     { the_row, the_column , Sudoku.Cell.new(the_row,the_column) }
     end
   end
 
@@ -37,7 +37,7 @@ defmodule Sudoku.Grid do
   def has_known_value(grid,row,column,value) do
     Enum.map(grid, fn({the_row,the_column,cell}) ->
      if the_row == row && the_column == column do
-        {the_row, the_column , Sudoku.Cell.with_known_value(value) }
+        {the_row, the_column , Sudoku.Cell.with_known_value(the_row,the_column,value) }
       else
         {the_row, the_column , Sudoku.Cell.cant_have_value(cell,value) }
       end

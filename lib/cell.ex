@@ -7,22 +7,23 @@ defmodule Sudoku.Cell do
 
       ## Examples
       ## Start out with default: all values from the domain are possible
-      iex> cell = Sudoku.Cell.new
-      [1, 2, 3, 4, 5, 6, 7, 8, 9]
-      iex> cell == Sudoku.Domain.values
-      true
+      iex> cell = Sudoku.Cell.new(3,2)
+      iex> Sudoku.Cell.row(cell)
+      3
+      iex> Sudoku.Cell.column(cell)
+      2
       iex> Sudoku.Cell.number_of_possible_values(cell)
       9
       iex> Sudoku.Cell.has_known_value?(cell)
       false
       iex> Enum.map(Sudoku.Domain.values,fn(value) -> Sudoku.Cell.can_have_value?(cell,value) end)
       [true, true, true, true, true, true, true, true, true]
-      iex> Sudoku.Cell.cant_have_value(cell,4)
-      [1, 2, 3, 5, 6, 7, 8, 9]
+      iex> cell = Sudoku.Cell.cant_have_value(cell,4)
+      iex> Sudoku.Cell.number_of_possible_values(cell)
+      8
 
       ## Start out with a known value
-      iex> cell = Sudoku.Cell.with_known_value(6)
-      [6]
+      iex> cell = Sudoku.Cell.with_known_value(2,1,6)
       iex> Sudoku.Cell.number_of_possible_values(cell)
       1
       iex> Sudoku.Cell.has_known_value?(cell)
@@ -32,18 +33,19 @@ defmodule Sudoku.Cell do
   """
 
     @doc "Constructor: Create a new cell that can have all possible values in the domain"
-    def new do
-        Sudoku.Domain.values
+    def new(row,column) do
+        {row, column, Sudoku.Domain.values}
     end
 
     @doc "Constructor: Create a new cell with a given known value"
-    def with_known_value(value) do
-        [ value ]
+    def with_known_value(row,column,value) do
+        {row, column, [ value ]}
     end
 
     @doc "How many values are possible in this cell?"
     def number_of_possible_values(cell) do
-        length(cell)
+        {_row,_column,values} = cell
+        length(values)
     end
 
     @doc "A cell has a known value if only one possibility is left"
@@ -53,16 +55,29 @@ defmodule Sudoku.Cell do
 
     @doc "Return the value of the cell. Only valid if the value of the cell is known."
     def value_of(cell) do
-        List.first(cell)
+        {_row,_column,values} = cell
+        List.first(values)
     end
 
     @doc "Returns whether the given value is still possible in the cell"
     def can_have_value?(cell,value) do
-        Enum.any?(cell,fn(x) -> x == value end)
+        {_row,_column,values} = cell
+        Enum.any?(values,fn(x) -> x == value end)
     end
 
     @doc "Remove the given value from the possible values in the cell"
     def cant_have_value(cell,value) do
-        List.delete(cell,value)
+        {row,column,values} = cell
+        {row,column,List.delete(values,value)}
+    end
+
+    def column(cell) do
+      {_row,column,_values} = cell
+      column
+    end
+
+    def row(cell) do
+      {row,_column,_values} = cell
+      row
     end
 end
