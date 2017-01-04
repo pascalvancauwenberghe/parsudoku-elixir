@@ -17,6 +17,8 @@ defmodule Sudoku.Grid do
       1..3
  
   """
+  
+  alias Sudoku.Cell, as: Cell
 
   @rows  3
   @columns 3
@@ -24,22 +26,22 @@ defmodule Sudoku.Grid do
   @doc "Constructor: create a 3x3 Cell section of a Sudoku puzzle"
   def new do
     for the_row <- rows , the_column <- columns do
-      Sudoku.Cell.new(the_row,the_column)
+      Cell.new(the_row,the_column)
     end
   end
 
   @doc "A Grid is solved when all of its Cells have a known value"
   def solved?(grid) do
-    Enum.all?(grid,fn(cell) -> Sudoku.Cell.has_known_value?(cell) end)
+    Enum.all?(grid,fn(cell) -> Cell.has_known_value?(cell) end)
   end
 
   @doc "Return a grid with a Cell with the given value at the [row,column] coordinates"
   def has_known_value(grid,row,column,value) do
     Enum.map(grid, fn(cell) ->
-     if Sudoku.Cell.row(cell) == row && Sudoku.Cell.column(cell) == column do
-        Sudoku.Cell.with_known_value(Sudoku.Cell.row(cell),Sudoku.Cell.column(cell),value)
+     if Cell.row(cell) == row && Cell.column(cell) == column do
+        Cell.with_known_value(Cell.row(cell),Cell.column(cell),value)
       else
-        Sudoku.Cell.cant_have_value(cell,value)
+        Cell.cant_have_value(cell,value)
       end
     end)
   end
@@ -51,9 +53,9 @@ defmodule Sudoku.Grid do
 
   @doc "Return a grid with a Cell at [row,column] that can't have the given value"
   def cant_have_value(grid,row,column,value) do
-    cell = Enum.at(grid,slot(row,column)) |> Sudoku.Cell.cant_have_value(value)
-    if Sudoku.Cell.has_known_value?(cell) do
-      has_known_value(grid,row,column, Sudoku.Cell.value_of(cell))
+    cell = Enum.at(grid,slot(row,column)) |> Cell.cant_have_value(value)
+    if Cell.has_known_value?(cell) do
+      has_known_value(grid,row,column, Cell.value_of(cell))
     else
       List.replace_at(grid,slot(row,column),cell)
     end
@@ -61,8 +63,8 @@ defmodule Sudoku.Grid do
   
   @doc "Return a list of {row,column,value} for each cell with a known value"
   def known_values(grid) do
-    Enum.filter(grid,fn(cell) -> Sudoku.Cell.has_known_value?(cell) end)
-    |> Enum.map(fn(cell) -> {Sudoku.Cell.row(cell),Sudoku.Cell.column(cell),Sudoku.Cell.value_of(cell) } end)
+    Enum.filter(grid,fn(cell) -> Cell.has_known_value?(cell) end)
+    |> Enum.map(fn(cell) -> {Cell.row(cell),Cell.column(cell),Cell.value_of(cell) } end)
   end
 
   @doc "Return all row indices"
