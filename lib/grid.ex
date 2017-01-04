@@ -35,13 +35,13 @@ defmodule Sudoku.Grid do
 
   @doc "Return a grid with a Cell with the given value at the [row,column] coordinates"
   def has_known_value(grid,row,column,value) do
-    for the_row <- rows , the_column <- columns do
-      if the_row == row && the_column == column do
+    Enum.map(grid, fn({the_row,the_column,cell}) ->
+     if the_row == row && the_column == column do
         {the_row, the_column , Sudoku.Cell.with_known_value(value) }
       else
-        {the_row, the_column , Sudoku.Grid.cell(grid,the_row,the_column) |> Sudoku.Cell.cant_have_value(value) }
+        {the_row, the_column , Sudoku.Cell.cant_have_value(cell,value) }
       end
-    end
+    end)
   end
 
   @doc "Return the Cell at the [row,column] coordinates"
