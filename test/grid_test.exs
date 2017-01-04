@@ -4,7 +4,7 @@ defmodule GridTest do
 
   test "A Grid is unsolved by default" do
     grid = Sudoku.Grid.new
-    assert Sudoku.Grid.solved?(grid) == false
+    assert ! Sudoku.Grid.solved?(grid)
   end
 
   test "can set a known solution for a cell" do
@@ -26,14 +26,14 @@ defmodule GridTest do
     |> Sudoku.Grid.has_known_value(3,2,8)
     |> Sudoku.Grid.has_known_value(3,3,9)
 
-    assert Sudoku.Grid.solved?(grid) == true
+    assert Sudoku.Grid.solved?(grid)
 
   end
 
   test "can reduce the set of possible values of a Cell" do
     grid = Sudoku.Grid.new |> Sudoku.Grid.cant_have_value(1,2,3)
 
-    assert Sudoku.Cell.can_have_value?(Sudoku.Grid.cell(grid,1,2),3) == false 
+    assert ! Sudoku.Cell.can_have_value?(Sudoku.Grid.cell(grid,1,2),3)
   end
 
   test "when a cell's value is known, no other cell in the grid may have that value" do
@@ -56,7 +56,8 @@ defmodule GridTest do
     |> Sudoku.Grid.has_known_value(2,2,5)
     |> Sudoku.Grid.has_known_value(2,3,6)
     |> Sudoku.Grid.has_known_value(3,1,7)
-    |> Sudoku.Grid.cant_have_value(3,3,9)
+
+    grid = grid |> Sudoku.Grid.cant_have_value(3,3,9)
 
     assert Sudoku.Grid.solved?(grid)
     assert Sudoku.Grid.cell(grid,3,2) |> Sudoku.Cell.value_of == 9

@@ -9,12 +9,12 @@ defmodule CellTest do
 
   test "a cell with all possibilities has an unknown value" do
     cell = Sudoku.Cell.new
-    assert Sudoku.Cell.has_known_value?(cell) == false
+    assert ! Sudoku.Cell.has_known_value?(cell)
   end
 
   test "a cell's value can be set to a known value" do
     cell = Sudoku.Cell.with_known_value(5)
-    assert Sudoku.Cell.has_known_value?(cell) == true
+    assert Sudoku.Cell.has_known_value?(cell)
   end
 
   test "a cell can return its value when it is known" do
@@ -39,7 +39,7 @@ defmodule CellTest do
     cell = Sudoku.Cell.new
     cell = Sudoku.Cell.cant_have_value(cell,3)
     assert Sudoku.Cell.number_of_possible_values(cell) == 8
-    assert Sudoku.Cell.can_have_value?(cell,3) == false
-    assert Sudoku.Cell.can_have_value?(cell,4) == true
+    assert ! Sudoku.Cell.can_have_value?(cell,3)
+    assert Sudoku.Cell.can_have_value?(cell,4)
   end
 end
