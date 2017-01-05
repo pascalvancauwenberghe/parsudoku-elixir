@@ -48,8 +48,7 @@ defmodule Sudoku.Cell do
 
     @doc "How many values are possible in this cell?"
     def number_of_possible_values(cell) do
-        {_row,_column,values} = cell
-        length(values)
+        values(cell) |> length
     end
 
     @doc "A cell has a known value if only one possibility is left"
@@ -59,14 +58,12 @@ defmodule Sudoku.Cell do
 
     @doc "Return the value of the cell. Only valid if the value of the cell is known."
     def value_of(cell) do
-        {_row,_column,values} = cell
-        List.first(values)
+        values(cell) |> List.first
     end
 
     @doc "Returns whether the given value is still possible in the cell"
     def can_have_value?(cell,value) do
-        {_row,_column,values} = cell
-        Enum.any?(values,fn(x) -> x == value end)
+        values(cell) |> Enum.any?(fn(x) -> x == value end)
     end
 
     @doc "Remove the given value from the possible values in the cell"
@@ -86,4 +83,8 @@ defmodule Sudoku.Cell do
       {row,_column,_values} = cell
       row
     end
+
+    defp values(cell) do
+    end
+
 end
