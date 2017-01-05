@@ -58,7 +58,6 @@ defmodule Sudoku.Cell do
 
     @doc "Return the value of the cell. Only valid if the value of the cell is known."
     def value_of(cell) do
-        {_row,_column,values} = cell
         values(cell) |> List.first
     end
 
