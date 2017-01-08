@@ -83,13 +83,7 @@ defmodule Sudoku.Grid do
   end
 
   defp remove_possibilities(grid,values) do
-    Enum.map(grid, fn(cell) ->
-     if Cell.has_known_value?(cell) do
-        cell
-      else
-        Cell.cant_have_values(cell,values)
-      end
-    end)
+    Enum.map(grid, fn(cell) -> if Cell.has_known_value?(cell), do: cell, else: Cell.cant_have_values(cell,values) end)
     |> remove_possibilities(diff(values,found_values(grid)))
   end
 
