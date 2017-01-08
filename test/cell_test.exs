@@ -42,4 +42,11 @@ defmodule CellTest do
     assert ! Sudoku.Cell.can_have_value?(cell,3)
     assert Sudoku.Cell.can_have_value?(cell,4)
   end
+
+  test "can remove multiple values from a cell" do
+    cell = Sudoku.Cell.new(2,3)
+    cell = Sudoku.Cell.cant_have_values(cell,[1,5,8])
+    assert Sudoku.Cell.number_of_possible_values(cell) == 6
+    assert !Sudoku.Cell.can_have_value?(cell,5)
+  end
 end

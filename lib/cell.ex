@@ -72,6 +72,10 @@ defmodule Sudoku.Cell do
         {row,column,List.delete(values,value)}
     end
 
+    def cant_have_values(cell,forbidden_values) do
+        {row,column,values} = cell
+    end
+
     @doc "Return the column (X) coordinate of the Cell"
     def column(cell) do
       {_row,column,_values} = cell
