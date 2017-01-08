@@ -78,6 +78,12 @@ defmodule Sudoku.Cell do
         {row,column,Enum.reject(values,fn(value) -> Enum.member?(forbidden_values,value) end)}
     end
 
+    @doc "Set the value of the cell, keeping coordinates"
+    def set_value(cell,value) do
+         {row,column,_values} = cell
+         {row,column,[value]}
+    end
+
     @doc "Return the column (X) coordinate of the Cell"
     def column(cell) do
       {_row,column,_values} = cell

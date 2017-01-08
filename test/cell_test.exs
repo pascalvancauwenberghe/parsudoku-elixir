@@ -49,4 +49,10 @@ defmodule CellTest do
     assert Sudoku.Cell.number_of_possible_values(cell) == 6
     assert !Sudoku.Cell.can_have_value?(cell,5)
   end
+
+  test "can set the value of a cell" do
+    cell = Sudoku.Cell.new(3,1) |> Sudoku.Cell.set_value(5)
+    assert Sudoku.Cell.has_known_value?(cell) 
+    assert Sudoku.Cell.value_of(cell) == 5
+  end
 end
