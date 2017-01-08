@@ -38,50 +38,50 @@ defmodule Sudoku.Cell do
 
     @doc "Constructor: Create a new cell that can have all possible values in the domain"
     def new(row,column) do
-        {row, column, Sudoku.Domain.values}
+      {row, column, Sudoku.Domain.values}
     end
 
     @doc "Constructor: Create a new cell with a given known value"
     def with_known_value(row,column,value) do
-        {row, column, [ value ]}
+      {row, column, [ value ]}
     end
 
     @doc "How many values are possible in this cell?"
     def number_of_possible_values(cell) do
-        values(cell) |> length
+      values(cell) |> length
     end
 
     @doc "A cell has a known value if only one possibility is left"
     def has_known_value?(cell) do
-        number_of_possible_values(cell) == 1
+      number_of_possible_values(cell) == 1
     end
 
     @doc "Return the value of the cell. Only valid if the value of the cell is known."
     def value_of(cell) do
-        values(cell) |> List.first
+      values(cell) |> List.first
     end
 
     @doc "Returns whether the given value is still possible in the cell"
     def can_have_value?(cell,value) do
-        values(cell) |> Enum.any?(fn(x) -> x == value end)
+      values(cell) |> Enum.any?(&(&1 == value))
     end
 
     @doc "Remove the given value from the possible values in the cell"
     def cant_have_value(cell,value) do
-        {row,column,values} = cell
-        {row,column,List.delete(values,value)}
+      {row,column,values} = cell
+      {row,column,List.delete(values,value)}
     end
 
     @doc "Remove the given values from the possible values in the cell"
     def cant_have_values(cell,forbidden_values) do
-        {row,column,values} = cell
-        {row,column,Enum.reject(values,fn(value) -> Enum.member?(forbidden_values,value) end)}
+      {row,column,values} = cell
+      {row,column,Enum.reject(values,&(Enum.member?(forbidden_values,&1)))}
     end
 
     @doc "Set the value of the cell, keeping coordinates"
     def set_value(cell,value) do
-         {row,column,_values} = cell
-         {row,column,[value]}
+      {row,column,_values} = cell
+      {row,column,[value]}
     end
 
     @doc "Return the column (X) coordinate of the Cell"
@@ -97,7 +97,7 @@ defmodule Sudoku.Cell do
     end
 
     defp values(cell) do
-        {_row,_column,values} = cell
-        values
+      {_row,_column,values} = cell
+      values
     end
 end

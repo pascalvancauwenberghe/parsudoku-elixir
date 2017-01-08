@@ -32,7 +32,7 @@ defmodule Sudoku.Grid do
 
   @doc "A Grid is solved when all of its Cells have a known value"
   def solved?(grid) do
-    Enum.all?(grid,fn(cell) -> Cell.has_known_value?(cell) end)
+    Enum.all?(grid,&(Cell.has_known_value?(&1)))
   end
 
   @doc "Return a grid with a Cell with the given value at the [row,column] coordinates"
@@ -56,8 +56,8 @@ defmodule Sudoku.Grid do
   
   @doc "Return a list of {row,column,value} for each cell with a known value"
   def known_values(grid) do
-    Enum.filter(grid,fn(cell) -> Cell.has_known_value?(cell) end)
-    |> Enum.map(fn(cell) -> {Cell.row(cell),Cell.column(cell),Cell.value_of(cell) } end)
+    Enum.filter(grid,&(Cell.has_known_value?(&1)))
+    |> Enum.map(&({Cell.row(&1),Cell.column(&1),Cell.value_of(&1) } ))
   end
 
   @doc "Return all row indices"
@@ -83,16 +83,16 @@ defmodule Sudoku.Grid do
   end
 
   defp remove_possibilities(grid,values) do
-    Enum.map(grid, fn(cell) -> if Cell.has_known_value?(cell), do: cell, else: Cell.cant_have_values(cell,values) end)
+    Enum.map(grid,&(if Cell.has_known_value?(&1), do: &1, else: Cell.cant_have_values(&1,values)))
     |> remove_possibilities(diff(values,found_values(grid)))
   end
 
   defp found_values(grid) do
-    Enum.filter(grid,fn(cell) -> Cell.has_known_value?(cell) end)
-    |> Enum.map(fn(cell) -> Cell.value_of(cell) end)
+    Enum.filter(grid,&(Cell.has_known_value?(&1)))
+    |> Enum.map(&(Cell.value_of(&1)))
   end
 
   defp diff(list1,list2) do
-    Enum.reject(list1,fn(value) -> Enum.member?(list2,value) end)
+    Enum.reject(list1,&(Enum.member?(list2,&1)))
   end
 end
