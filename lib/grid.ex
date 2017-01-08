@@ -37,13 +37,10 @@ defmodule Sudoku.Grid do
 
   @doc "Return a grid with a Cell with the given value at the [row,column] coordinates"
   def has_known_value(grid,row,column,value) do
-    Enum.map(grid, fn(cell) ->
-     if Cell.row(cell) == row && Cell.column(cell) == column do
-        Cell.with_known_value(Cell.row(cell),Cell.column(cell),value)
-      else
-        Cell.cant_have_value(cell,value)
-      end
-    end)
+    position = slot(row,column)
+    cell = Enum.at(grid,position) 
+    cell = Cell.with_known_value(Cell.row(cell),Cell.column(cell),value)
+    List.replace_at(grid,position,cell) |> apply_unique_constraint()
   end
 
   @doc "Return the Cell at the [row,column] coordinates"
@@ -53,12 +50,9 @@ defmodule Sudoku.Grid do
 
   @doc "Return a grid with a Cell at [row,column] that can't have the given value"
   def cant_have_value(grid,row,column,value) do
-    cell = Enum.at(grid,slot(row,column)) |> Cell.cant_have_value(value)
-    if Cell.has_known_value?(cell) do
-      has_known_value(grid,row,column, Cell.value_of(cell))
-    else
-      List.replace_at(grid,slot(row,column),cell)
-    end
+    position = slot(row,column)
+    cell = Enum.at(grid,position) |> Cell.cant_have_value(value)
+    List.replace_at(grid,position,cell) |> apply_unique_constraint()
   end
   
   @doc "Return a list of {row,column,value} for each cell with a known value"
@@ -79,5 +73,33 @@ defmodule Sudoku.Grid do
 
   defp slot(row,column) do
     (row-1) * @columns + (column-1)
+  end
+
+  defp apply_unique_constraint(grid) do
+    remove_possibilities(grid,found_values(grid))
+  end
+
+  defp remove_possibilities(grid,[]) do
+    grid
+  end
+
+  defp remove_possibilities(grid,values) do
+    Enum.map(grid, fn(cell) ->
+     if Cell.has_known_value?(cell) do
+        cell
+      else
+        Cell.cant_have_values(cell,values)
+      end
+    end)
+    |> remove_possibilities(diff(values,found_values(grid)))
+  end
+
+  defp found_values(grid) do
+    Enum.filter(grid,fn(cell) -> Cell.has_known_value?(cell) end)
+    |> Enum.map(fn(cell) -> Cell.value_of(cell) end)
+  end
+
+  defp diff(list1,list2) do
+    Enum.reject(list1,fn(value) -> Enum.member?(list2,value) end)
   end
 end

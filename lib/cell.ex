@@ -72,8 +72,10 @@ defmodule Sudoku.Cell do
         {row,column,List.delete(values,value)}
     end
 
+    @doc "Remove the given values from the possible values in the cell"
     def cant_have_values(cell,forbidden_values) do
         {row,column,values} = cell
+        {row,column,Enum.reject(values,fn(value) -> Enum.member?(forbidden_values,value) end)}
     end
 
     @doc "Return the column (X) coordinate of the Cell"
