@@ -38,8 +38,7 @@ defmodule Sudoku.Grid do
   @doc "Return a grid with a Cell with the given value at the [row,column] coordinates"
   def has_known_value(grid,row,column,value) do
     position = slot(row,column)
-    cell = Enum.at(grid,position) 
-    cell = Cell.with_known_value(Cell.row(cell),Cell.column(cell),value)
+    cell = Enum.at(grid,position) |> Cell.set_value(value)
     List.replace_at(grid,position,cell) |> apply_unique_constraint()
   end
 
