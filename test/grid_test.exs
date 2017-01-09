@@ -8,10 +8,11 @@ defmodule GridTest do
   end
 
   test "can set a known solution for a cell" do
-    grid = Sudoku.Grid.new
-    |> Sudoku.Grid.has_known_value(1,2,3)
+    for row <- Sudoku.Grid.rows, column <- Sudoku.Grid.columns, value <- Sudoku.Domain.values do
+      grid = Sudoku.Grid.new |> Sudoku.Grid.has_known_value(row,column,value)
 
-    assert Sudoku.Cell.value_of(Sudoku.Grid.cell(grid,1,2)) == 3
+      assert Sudoku.Cell.value_of(Sudoku.Grid.cell(grid,row,column)) == value
+    end
   end
 
   test "when all cells have a known value, the grid is solved" do
@@ -31,9 +32,11 @@ defmodule GridTest do
   end
 
   test "can reduce the set of possible values of a Cell" do
-    grid = Sudoku.Grid.new |> Sudoku.Grid.cant_have_value(1,2,3)
+    for row <- Sudoku.Grid.rows, column <- Sudoku.Grid.columns, value <- Sudoku.Domain.values do
+      grid = Sudoku.Grid.new |> Sudoku.Grid.cant_have_value(row,column,value)
 
-    assert ! Sudoku.Cell.can_have_value?(Sudoku.Grid.cell(grid,1,2),3)
+      assert ! Sudoku.Cell.can_have_value?(Sudoku.Grid.cell(grid,row,column),value)
+    end
   end
 
   test "when a cell's value is known, no other cell in the grid may have that value" do
