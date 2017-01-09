@@ -59,6 +59,11 @@ defmodule Sudoku.Grid do
     Enum.map(grid,fn(cell) -> if Cell.row(cell) == row, do: Cell.cant_have_value(cell,value), else: cell end)
   end
   
+  @doc "Return a grid where the given value is not possible in the given column"
+  def cant_have_value_in_column(grid,column,value) do
+    Enum.map(grid,fn(cell) -> if Cell.column(cell) == column, do: Cell.cant_have_value(cell,value), else: cell end)
+  end
+  
   @doc "Return a list of {row,column,value} for each cell with a known value"
   def known_values(grid) do
     Enum.filter(grid,&(Cell.has_known_value?(&1)))
