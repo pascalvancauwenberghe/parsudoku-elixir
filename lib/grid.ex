@@ -53,6 +53,11 @@ defmodule Sudoku.Grid do
     cell = Enum.at(grid,position) |> Cell.cant_have_value(value)
     List.replace_at(grid,position,cell) |> apply_unique_constraint()
   end
+
+  @doc "Return a grid where the given value is not possible in the given row"
+  def cant_have_value_in_row(grid,row,value) do
+    Enum.map(grid,fn(cell) -> if Cell.row(cell) == row, do: Cell.cant_have_value(cell,value), else: cell end)
+  end
   
   @doc "Return a list of {row,column,value} for each cell with a known value"
   def known_values(grid) do

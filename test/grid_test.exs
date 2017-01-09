@@ -83,4 +83,14 @@ defmodule GridTest do
     assert Sudoku.Grid.known_values(grid) == [{1,2,9} , {2,3,8} , {3,1,7} ]
   end
 
+  test "can remove a value from a row" do
+    for row <- Sudoku.Grid.rows, value <- Sudoku.Domain.values do
+      grid = Sudoku.Grid.new |> Sudoku.Grid.cant_have_value_in_row(row,value)
+
+      for column <- Sudoku.Grid.columns do
+        assert !Sudoku.Cell.can_have_value?(Sudoku.Grid.cell(grid,row,column),value)
+        assert Sudoku.Cell.number_of_possible_values(Sudoku.Grid.cell(grid,row,column)) == Sudoku.Domain.size - 1
+      end
+    end
+  end
 end
