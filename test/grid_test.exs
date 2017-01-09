@@ -94,7 +94,7 @@ defmodule GridTest do
     end
   end
 
-    test "can remove a value from a column" do
+  test "can remove a value from a column" do
     for column <- Sudoku.Grid.columns, value <- Sudoku.Domain.values do
       grid = Sudoku.Grid.new |> Sudoku.Grid.cant_have_value_in_column(column,value)
 
@@ -102,6 +102,42 @@ defmodule GridTest do
         assert !Sudoku.Cell.can_have_value?(Sudoku.Grid.cell(grid,row,column),value)
         assert Sudoku.Cell.number_of_possible_values(Sudoku.Grid.cell(grid,row,column)) == Sudoku.Domain.size - 1
       end
+    end
+  end
+
+  test "Removing values from columns activates constraints" do
+    grid = Sudoku.Grid.new 
+    |> Sudoku.Grid.cant_have_value_in_row(1,2)
+    |> Sudoku.Grid.cant_have_value_in_row(1,3)
+    |> Sudoku.Grid.cant_have_value_in_column(1,9) 
+    |> Sudoku.Grid.cant_have_value_in_column(1,8) 
+    |> Sudoku.Grid.cant_have_value_in_column(1,7) 
+    |> Sudoku.Grid.cant_have_value_in_column(1,6) 
+    |> Sudoku.Grid.cant_have_value_in_column(1,5) 
+    |> Sudoku.Grid.cant_have_value_in_column(1,4) 
+
+    assert Sudoku.Grid.cell(grid,1,1) |> Sudoku.Cell.value_of == 1
+
+    for row <- Sudoku.Grid.rows, column <- Sudoku.Grid.columns do
+      assert Sudoku.Grid.cell(grid,row,column) |> Sudoku.Cell.can_have_value?(1) == (row == 1 && column == 1)
+    end
+  end
+
+ test "Removing values from rows activates constraints" do
+    grid = Sudoku.Grid.new 
+    |> Sudoku.Grid.cant_have_value_in_column(1,2)
+    |> Sudoku.Grid.cant_have_value_in_column(1,3)
+    |> Sudoku.Grid.cant_have_value_in_row(1,9) 
+    |> Sudoku.Grid.cant_have_value_in_row(1,8) 
+    |> Sudoku.Grid.cant_have_value_in_row(1,7) 
+    |> Sudoku.Grid.cant_have_value_in_row(1,6) 
+    |> Sudoku.Grid.cant_have_value_in_row(1,5) 
+    |> Sudoku.Grid.cant_have_value_in_row(1,4) 
+
+    assert Sudoku.Grid.cell(grid,1,1) |> Sudoku.Cell.value_of == 1
+
+    for row <- Sudoku.Grid.rows, column <- Sudoku.Grid.columns do
+      assert Sudoku.Grid.cell(grid,row,column) |> Sudoku.Cell.can_have_value?(1) == (row == 1 && column == 1)
     end
   end
 
