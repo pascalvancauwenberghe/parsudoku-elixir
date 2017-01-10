@@ -8,4 +8,10 @@ defmodule RegionTest do
 
     assert Sudoku.Region.name(region) == "A"
   end
+
+  test "A region starts out unsolved" do
+    region = Sudoku.Region.new("B")
+
+    assert ! Sudoku.Region.solved?(region)
+  end
 end
