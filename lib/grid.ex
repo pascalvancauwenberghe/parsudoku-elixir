@@ -11,9 +11,9 @@ defmodule Sudoku.Grid do
       iex> Sudoku.Grid.known_values(grid)
       [{1,3,5}]
 
-      iex> Sudoku.Grid.rows
+      iex> Sudoku.Grid.rows()
       1..3
-      iex> Sudoku.Grid.columns
+      iex> Sudoku.Grid.columns()
       1..3
  
   """
@@ -25,7 +25,7 @@ defmodule Sudoku.Grid do
 
   @doc "Constructor: create a 3x3 Cell section of a Sudoku puzzle"
   def new do
-    for the_row <- rows , the_column <- columns do
+    for the_row <- rows() , the_column <- columns() do
       Cell.new(the_row,the_column)
     end
   end
