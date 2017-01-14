@@ -21,7 +21,7 @@ defmodule Sudoku.Region do
   def new(name,initial \\ []) do
     grid = Enum.reduce(initial,Sudoku.Grid.new,fn({row,column,value},grid) -> Sudoku.Grid.has_known_value(grid,row,column,value) end)
    
-    {:ok,pid} = GenServer.start_link( Sudoku.Region, { name, grid })
+    {:ok,pid} = GenServer.start_link( Sudoku.Region, { name, grid , []})
     pid
   end
 
@@ -40,6 +40,14 @@ defmodule Sudoku.Region do
    GenServer.call(region,:known_values)
  end
 
+ def notify(region,neighbours) do
+   GenServer.call(region,{:notify , neighbours})
+ end
+
+ def found(region,role,name,value) do 
+   GenServer.cast(region,{:found, role, name, value})
+ end
+
 # GenServer callbacks
 
   def handle_call(:name,_from,region) do
@@ -54,13 +62,33 @@ defmodule Sudoku.Region do
     {:reply ,  grid_of(region) |> Sudoku.Grid.solved? , region }
   end
 
+  def handle_call({:notify,neighbours},_from,region) do
+    known_values = Sudoku.Grid.known_values(grid_of(region))
+    name = name_of(region)
+    Enum.each(known_values,fn(value) -> notify_all(name,value,neighbours) end)
+    {:reply ,  [] , with_neighbours(region,neighbours) }
+  end
+
+  def handle_cast({:found, role, name, value},state) do
+    {:noreply , state }
+  end
+
+  defp notify_all(name,value,neighbours) do
+    Enum.each(neighbours,fn({role , pid}) -> Sudoku.Region.found(pid,role,name,value) end)
+  end
+
   defp grid_of(state) do
-    { _name , grid } = state
+    { _name , grid, _neighbours } = state
     grid
   end
 
   defp name_of(state) do
-     { name , _grid } = state
+     { name , _grid, _neighbours } = state
      name
+  end
+
+  defp with_neighbours(state,neighbours) do
+    { name , grid, _neighbours } = state
+    { name , grid, neighbours }
   end
 end
