@@ -43,20 +43,24 @@ defmodule Sudoku.Region do
 # GenServer callbacks
 
   def handle_call(:name,_from,region) do
-    { name , _grid } = region
-    {:reply , name , region }
+    {:reply , name_of(region) , region }
   end
 
   def handle_call(:known_values,_from,region) do
-    {:reply , grid(region) |> Sudoku.Grid.known_values , region}
+    {:reply , grid_of(region) |> Sudoku.Grid.known_values , region}
   end
 
   def handle_call(:solved?,_from,region) do
-    {:reply ,  grid(region) |> Sudoku.Grid.solved? , region }
+    {:reply ,  grid_of(region) |> Sudoku.Grid.solved? , region }
   end
 
-  defp grid(region) do
-    { _name , grid } = region
+  defp grid_of(state) do
+    { _name , grid } = state
     grid
+  end
+
+  defp name_of(state) do
+     { name , _grid } = state
+     name
   end
 end
