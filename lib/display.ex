@@ -5,6 +5,11 @@ defmodule Sudoku.Display do
       iex> display = Sudoku.Display.new
       iex> Sudoku.Display.solved?(display)
       false
+      iex> Sudoku.Display.found(display,:display, "B",{1,2,3})
+      iex> Sudoku.Display.found(display,:display, "C",{2,3,6})
+      iex> Sudoku.Display.found(display,:display, "D",{3,1,5})
+      iex> Sudoku.Display.received(display) == [{"B",{1,2,3}}, {"C",{2,3,6}} , {"D",{3,1,5}}]
+      true
 
   """
 
@@ -18,7 +23,7 @@ defmodule Sudoku.Display do
     pid
   end
 
-  @doc "Returns whether included Grid is solved"
+  @doc "Returns whether Sudoku is solved"
   def solved?(display) do
     GenServer.call(display,:solved?)
   end
