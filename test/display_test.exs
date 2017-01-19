@@ -9,13 +9,13 @@ defmodule DisplayTest do
     assert ! Sudoku.Display.solved?(display)
   end
 
-  test "A display receives known values of Region" do
+  test "A display receives and stores known values" do
     display = Sudoku.Display.new
 
-    region = Sudoku.Region.new("B",[{1,2,3}, {2,3,6} , {3,1,5}]) 
+    Sudoku.Display.found(display,:display, "B",{1,2,3})
+    Sudoku.Display.found(display,:display, "C",{2,3,6})
+    Sudoku.Display.found(display,:display, "D",{3,1,5})
 
-    Sudoku.Region.notify(region,[{:display, display}])
-
-    assert Sudoku.Display.received(display) == [{"B",{1,2,3}}, {"B",{2,3,6}} , {"B",{3,1,5}}]
+    assert Sudoku.Display.received(display) == [{"B",{1,2,3}}, {"C",{2,3,6}} , {"D",{3,1,5}}]
   end
 end
