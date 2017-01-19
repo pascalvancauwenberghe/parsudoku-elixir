@@ -1,6 +1,6 @@
 defmodule Sudoku.Display do
   @moduledoc """
-    A Display collects results from Regions
+    A Display collects results from `Sudoku.Region`
 
       iex> display = Sudoku.Display.new
       iex> Sudoku.Display.solved?(display)

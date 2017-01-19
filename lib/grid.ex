@@ -1,6 +1,6 @@
 defmodule Sudoku.Grid do
   @moduledoc """
-    A grid is a 3x3 Cell section of the whole Sudoku puzzle
+    A grid is a 3x3 `Sudoku.Cell` section of the whole Sudoku puzzle
 
       iex> grid = Sudoku.Grid.new
       iex> Sudoku.Grid.solved?(grid)

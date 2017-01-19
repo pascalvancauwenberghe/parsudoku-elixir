@@ -1,6 +1,6 @@
 defmodule Sudoku.Cell do
   @moduledoc """
-    A cell represents the values from the domain that are possible.
+    A cell represents the values from the `Sudoku.Domain` that are possible.
     A cell starts out with all domain values still possible
 
     The constraint satisfaction algorithm will reduce possibilities until only one value is possible.

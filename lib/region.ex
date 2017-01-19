@@ -1,6 +1,6 @@
 defmodule Sudoku.Region do
   @moduledoc """
-    A region contains a Grid and communicates results with neighbouring Regions 
+    A region contains a `Sudoku.Grid` and communicates results with neighbouring Regions 
 
       iex> region = Sudoku.Region.new("B")
       iex> Sudoku.Region.name(region)
