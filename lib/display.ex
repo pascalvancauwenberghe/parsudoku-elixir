@@ -12,7 +12,7 @@ defmodule Sudoku.Display do
 
 # Public API
 
-  @doc "Construct a new Display with the given name and optional list of known values as {row,column,value}"
+  @doc "Construct a new Display"
   def new do
     {:ok,pid} = GenServer.start_link( Sudoku.Display, [])
     pid
