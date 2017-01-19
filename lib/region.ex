@@ -82,12 +82,22 @@ defmodule Sudoku.Region do
   def handle_call({:notify,neighbours},_from,region) do
     known_values = Sudoku.Grid.known_values(grid_of(region))
     name = name_of(region)
-    Enum.each(known_values,fn(value) -> notify_all(name,value,neighbours) end)
+    notify_all_values(known_values,name,neighbours)
     {:reply ,  [] , with_neighbours(region,neighbours) }
   end
 
   def handle_cast({:found, role, name, value},state) do
-    {:noreply , with_received(state, {:found, role, name, value}) }
+    grid = grid_of(state)
+    known_values = Sudoku.Grid.known_values(grid)
+    grid = apply_constraint(grid,role,value)
+    new_known_values = diff(Sudoku.Grid.known_values(grid),known_values)
+
+    notify_all_values(new_known_values,name_of(state),neighbours_of(state))
+    {:noreply , with_received(state, grid,{:found, role, name, value}) }
+  end
+
+  defp notify_all_values(values,name,neighbours) do
+    Enum.each(values,fn(value) -> notify_all(name,value,neighbours) end)
   end
 
   defp notify_all(name,value,neighbours) do
@@ -109,14 +119,32 @@ defmodule Sudoku.Region do
      name
   end
 
+  defp neighbours_of(state) do
+     { _name , _grid, neighbours, _received } = state
+     neighbours
+  end
+
   defp with_neighbours(state,neighbours) do
     { name , grid, _neighbours , received} = state
     { name , grid, neighbours, received }
   end
 
-  defp with_received(state,message) do 
-    { name , grid, neighbours , received} = state
+  defp with_received(state,grid,message) do 
+    { name , _grid, neighbours , received} = state
     { name , grid, neighbours, [message|received] }
   end
 
+  defp apply_constraint(grid,role,value) do
+    {row,column,cell_value} = value
+    grid = cond do
+      role == :north || role == :south -> Sudoku.Grid.cant_have_value_in_column(grid,column,cell_value)
+      role == :east  || role == :west  -> Sudoku.Grid.cant_have_value_in_row(grid,row,cell_value)
+    end
+    
+    grid
+  end
+
+  defp diff(list1,list2) do
+    Enum.reject(list1,&(Enum.member?(list2,&1)))
+  end
 end
