@@ -41,8 +41,8 @@ defmodule Sudoku.Cell do
   """
     @type row :: pos_integer
     @type column :: pos_integer
-    @type cell :: {row, column, Sudoku.Domain.valuelist}
-    @type t :: cell
+    @opaque cell :: {row, column, Sudoku.Domain.valuelist}
+    @opaque t :: cell
 
     @spec new(row, column) :: cell
     @doc "Constructor: Create a new cell that can have all possible values in the domain"
