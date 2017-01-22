@@ -3,7 +3,7 @@ defmodule Sudoku.Domain do
       The domain represents the universe from which possible values of a constraint satisfaction variable are taken
     """
 
-    @type value :: number
+    @type value :: pos_integer
     @type valuelist :: [value]
     @domain [1,2,3,4,5,6,7,8,9]
 

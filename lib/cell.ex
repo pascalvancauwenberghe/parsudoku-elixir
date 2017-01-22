@@ -39,10 +39,10 @@ defmodule Sudoku.Cell do
   @typedoc """
   A cell is a { row, column, value}
   """
-    @type row :: number
-    @type column :: column
+    @type row :: pos_integer
+    @type column :: pos_integer
     @type cell :: {row, column, Sudoku.Domain.valuelist}
-
+    @type t :: cell
 
     @spec new(row, column) :: cell
     @doc "Constructor: Create a new cell that can have all possible values in the domain"
