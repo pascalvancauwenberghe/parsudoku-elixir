@@ -20,9 +20,13 @@ defmodule Sudoku.Grid do
   
   alias Sudoku.Cell, as: Cell
 
+  @type grid :: [Sudoku.Cell.t]
+  @type t :: grid
+
   @rows  3
   @columns 3
 
+  @spec new :: grid
   @doc "Constructor: create a 3x3 Cell section of a Sudoku puzzle"
   def new do
     for the_row <- rows() , the_column <- columns() do
@@ -30,11 +34,13 @@ defmodule Sudoku.Grid do
     end
   end
 
+  @spec solved?(grid) :: boolean
   @doc "A Grid is solved when all of its Cells have a known value"
   def solved?(grid) do
     Enum.all?(grid,&(Cell.has_known_value?(&1)))
   end
 
+  @spec has_known_value(grid,Sudoku.Cell.row,Sudoku.Cell.column,Sudoku.Domain.value) :: grid
   @doc "Return a grid with a Cell with the given value at the [row,column] coordinates"
   def has_known_value(grid,row,column,value) do
     position = slot(row,column)
@@ -42,11 +48,13 @@ defmodule Sudoku.Grid do
     List.replace_at(grid,position,cell) |> apply_unique_constraint()
   end
 
+  @spec cell(grid,Sudoku.Cell.row,Sudoku.Cell.column) :: Sudoku.Cell.t
   @doc "Return the Cell at the [row,column] coordinates"
   def cell(grid,row,column) do
     Enum.at(grid,slot(row,column))
   end
 
+  @spec cant_have_value(grid,Sudoku.Cell.row,Sudoku.Cell.column,Sudoku.Domain.value) :: grid
   @doc "Return a grid with a Cell at [row,column] that can't have the given value"
   def cant_have_value(grid,row,column,value) do
     position = slot(row,column)
@@ -54,29 +62,34 @@ defmodule Sudoku.Grid do
     List.replace_at(grid,position,cell) |> apply_unique_constraint()
   end
 
+  @spec cant_have_value_in_row(grid,Sudoku.Cell.row,Sudoku.Domain.value) :: grid
   @doc "Return a grid where the given value is not possible in the given row"
   def cant_have_value_in_row(grid,row,value) do
     Enum.map(grid,fn(cell) -> if Cell.row(cell) == row, do: Cell.cant_have_value(cell,value), else: cell end)
     |> apply_unique_constraint()
   end
   
+  @spec cant_have_value_in_column(grid,Sudoku.Cell.column,Sudoku.Domain.value) :: grid
   @doc "Return a grid where the given value is not possible in the given column"
   def cant_have_value_in_column(grid,column,value) do
     Enum.map(grid,fn(cell) -> if Cell.column(cell) == column, do: Cell.cant_have_value(cell,value), else: cell end)
     |> apply_unique_constraint()
   end
   
+  @spec known_values(grid) :: [ { Sudoku.Cell.row,Sudoku.Cell.column,Sudoku.Domain.value } ]
   @doc "Return a list of {row,column,value} for each cell with a known value"
   def known_values(grid) do
     Enum.filter(grid,&(Cell.has_known_value?(&1)))
     |> Enum.map(&({Cell.row(&1),Cell.column(&1),Cell.value_of(&1) } ))
   end
 
+  @spec rows :: Range.t
   @doc "Return all row indices"
   def rows do
     1..@rows
   end
 
+  @spec columns :: Range.t
   @doc "Return all column indices"
   def columns do
     1..@columns
