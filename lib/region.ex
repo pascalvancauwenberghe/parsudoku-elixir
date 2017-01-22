@@ -19,10 +19,15 @@ defmodule Sudoku.Region do
       true
   """
 
+  @type region :: pid
+  @type region_name :: String.t
+  @type t :: region
+
   use GenServer
 
 # Public API
 
+  @spec new(region_name,Sudoku.Grid.resultlist) :: region
   @doc "Construct a new Region with the given name and optional list of known values as {row,column,value}"
   def new(name,initial \\ []) do
     grid = Enum.reduce(initial,Sudoku.Grid.new,fn({row,column,value},grid) -> Sudoku.Grid.has_known_value(grid,row,column,value) end)
@@ -31,31 +36,37 @@ defmodule Sudoku.Region do
     pid
   end
 
+  @spec name(region) :: region_name
   @doc "Returns the name of the region"
   def name(region) do 
     GenServer.call(region,:name)
   end
 
+  @spec solved?(region) :: boolean
   @doc "Returns whether included Grid is solved"
   def solved?(region) do
     GenServer.call(region,:solved?)
   end
 
+ @spec known_values(region) :: Sudoku.Grid.resultlist
  @doc "Returns {row,column,value} of all Cells with known value"
  def known_values(region) do
    GenServer.call(region,:known_values)
  end
 
+ @spec received(region) :: [ {:found , role :: atom , from_region :: region_name , Sudoku.Grid.result } ]
  @doc "Returns list of all received notifications in format {:found, role, from_region_name , {row, column, value}} in order received"
  def received(region) do
    GenServer.call(region,:received)
  end
 
+ @spec notify(region,[ {role :: atom , pid } ]) :: []
  @doc "Defines which servers should be notified using call found(region,role,name,{row,column,value})"
  def notify(region,neighbours) do
    GenServer.call(region,{:notify , neighbours})
  end
 
+ @spec found(region,role :: atom, from_region :: region_name, Sudoku.Grid.result) :: :ok
  @doc "Notification from neighbour with given role and name that a value {row, column, value} was found"
  def found(region,role,name,value) do 
    GenServer.cast(region,{:found, role, name, value})
