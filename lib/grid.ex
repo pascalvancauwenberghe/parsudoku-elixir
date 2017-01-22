@@ -23,6 +23,9 @@ defmodule Sudoku.Grid do
   @type grid :: [Sudoku.Cell.t]
   @type t :: grid
 
+  @type result :: { Sudoku.Cell.row,Sudoku.Cell.column,Sudoku.Domain.value }
+  @type resultlist :: [ result ]
+
   @rows  3
   @columns 3
 
@@ -76,7 +79,7 @@ defmodule Sudoku.Grid do
     |> apply_unique_constraint()
   end
   
-  @spec known_values(grid) :: [ { Sudoku.Cell.row,Sudoku.Cell.column,Sudoku.Domain.value } ]
+  @spec known_values(grid) :: resultlist
   @doc "Return a list of {row,column,value} for each cell with a known value"
   def known_values(grid) do
     Enum.filter(grid,&(Cell.has_known_value?(&1)))
