@@ -44,7 +44,10 @@ defmodule RegionTest do
     # | _ | _ | _ |
     # | _ | 8 | _ |
 
-    almost_solved = Sudoku.Region.new("B",[{1,1,1}, {1,2,2} , {1,3,3} , {2,1,4}, {2,2,5} , {2,3,6} , {3,1,7}]) 
+    almost_solved = Sudoku.Region.new("B",
+    [{1,1,1}, {1,2,2} , {1,3,3} , 
+     {2,1,4}, {2,2,5} , {2,3,6} , 
+     {3,1,7}]) 
 
     Sudoku.Region.notify(almost_solved,[{:display,display}])
 
@@ -55,7 +58,10 @@ defmodule RegionTest do
     # | 1 | 2 | 3 |
     # | 4 | 5 | 6 |
     # | 7 | 9 | 8 |
-    assert Sudoku.Display.received(display) == [{"B",{1,1,1}}, {"B",{1,2,2}} , {"B",{1,3,3}} , {"B",{2,1,4}}, {"B",{2,2,5}} , {"B",{2,3,6}} , {"B",{3,1,7}} , {"B",{3,2,9}} , {"B",{3,3,8}} ]
+    assert Sudoku.Display.received(display) == 
+    [{"B",{1,1,1}}, {"B",{1,2,2}} , {"B",{1,3,3}} , 
+     {"B",{2,1,4}}, {"B",{2,2,5}} , {"B",{2,3,6}} , 
+     {"B",{3,1,7}} , {"B",{3,2,9}} , {"B",{3,3,8}} ]
     
   end
 
@@ -66,7 +72,10 @@ defmodule RegionTest do
     # | _ | _ | _ | = | 4 | 5 | _ |
     # | _ | 8 | _ | = | 6 | 7 | _ |
     
-    almost_solved = Sudoku.Region.new("B",[{1,1,1}, {1,2,2} , {1,3,3} , {2,1,4}, {2,2,5} , {3,1,6} , {3,2,7}]) 
+    almost_solved = Sudoku.Region.new("B",
+    [{1,1,1}, {1,2,2} , {1,3,3} , 
+     {2,1,4}, {2,2,5} , 
+     {3,1,6} , {3,2,7}]) 
 
     Sudoku.Region.notify(almost_solved,[{:display,display}])
 
@@ -77,7 +86,10 @@ defmodule RegionTest do
     # | 1 | 2 | 3 |
     # | 4 | 5 | 8 |
     # | 6 | 7 | 9 |
-    assert Sudoku.Display.received(display) == [{"B",{1,1,1}}, {"B",{1,2,2}} , {"B",{1,3,3}} , {"B",{2,1,4}}, {"B",{2,2,5}} , {"B",{3,1,6}} , {"B",{3,2,7}} , {"B",{2,3,8}} , {"B",{3,3,9}} ]
+    assert Sudoku.Display.received(display) == 
+    [{"B",{1,1,1}}, {"B",{1,2,2}} , {"B",{1,3,3}} , 
+     {"B",{2,1,4}}, {"B",{2,2,5}} , 
+     {"B",{3,1,6}} , {"B",{3,2,7}} , {"B",{2,3,8}} , {"B",{3,3,9}} ]
     
   end
 end
