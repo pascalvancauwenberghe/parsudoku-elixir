@@ -2,7 +2,7 @@ defmodule ParSudoku do
    @moduledoc """
     The ParSudoku creates the full Sudoku puzzle from 9 `Sudoku.Region`.
 
-      iex> regions = ParSudoku.new([ { "A" , {1,2,3}} ])
+      iex> { _display , regions } = ParSudoku.new([ { "A" , {1,2,3}} ])
       iex> length(regions)
       9
 
@@ -15,6 +15,7 @@ defmodule ParSudoku do
       initial_values = initial |> Enum.filter_map(fn({region_name,_result}) -> region_name == name end,fn({_region_name,result}) -> result end)
       Sudoku.Region.new(name,initial_values)
     end
-    regions
+    display = Sudoku.Display.new
+    { display , regions }
   end
 end

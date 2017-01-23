@@ -3,21 +3,23 @@ defmodule ParSudokuTest do
   doctest ParSudoku
 
   test "Parsudoku creates 3x3 Region structure" do
-    regions = ParSudoku.new([ { "A" , {1,2,3}} ])
+    {display, regions} = ParSudoku.new([ { "A" , {1,2,3}} ])
 
     assert length(regions) == 9
     region_a = Enum.at(regions,0)
 
     assert Sudoku.Region.known_values(region_a) == [ {1,2,3} ]
+
+    assert !Sudoku.Display.solved?(display)
   end
 
   test "Parsudoku creates easy sudoku" do
-    regions = ParSudoku.new(simple_sudoku())
+    {display, regions} = ParSudoku.new(simple_sudoku())
 
     region_i = Enum.at(regions,8)
 
     assert Sudoku.Region.known_values(region_i) == [ {1,1,2}, {1,3,8}, {3,1,5}, {3,3,3} ]
-    
+    assert !Sudoku.Display.solved?(display)
   end
 
 
