@@ -1,6 +1,8 @@
 defmodule Sudoku.Display do
   @moduledoc """
-    A Display collects results from `Sudoku.Region`
+    A Display collects results from `Sudoku.Region`.
+    
+    It implementes the `Sudoku.Notifyable` behaviour
 
       iex> display = Sudoku.Display.new
       iex> Sudoku.Display.solved?(display)
@@ -17,6 +19,7 @@ defmodule Sudoku.Display do
   @type t :: display
 
   use GenServer
+  @behaviour Sudoku.Notifyable
 
 # Public API
 

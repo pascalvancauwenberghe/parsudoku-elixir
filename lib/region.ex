@@ -2,6 +2,8 @@ defmodule Sudoku.Region do
   @moduledoc """
     A region contains a `Sudoku.Grid` and communicates results with neighbouring Regions 
 
+    It implementes the `Sudoku.Notifyable` behaviour
+
       iex> region = Sudoku.Region.new("B")
       iex> Sudoku.Region.name(region)
       "B"
@@ -24,6 +26,7 @@ defmodule Sudoku.Region do
   @type t :: region
 
   use GenServer
+  @behaviour Sudoku.Notifyable
 
 # Public API
 
