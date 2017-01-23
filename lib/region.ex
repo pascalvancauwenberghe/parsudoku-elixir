@@ -104,7 +104,7 @@ defmodule Sudoku.Region do
     grid = grid_of(state)
     known_values = Sudoku.Grid.known_values(grid)
     grid = apply_constraint(grid,role,value)
-    new_known_values = diff(Sudoku.Grid.known_values(grid),known_values)
+    new_known_values = Sudoku.Grid.known_values(grid) -- known_values
 
     notify_all_values(new_known_values,name_of(state),neighbours_of(state))
     {:noreply , with_received(state, grid,{:found, role, name, value}) }
@@ -158,7 +158,4 @@ defmodule Sudoku.Region do
     grid
   end
 
-  defp diff(list1,list2) do
-    Enum.reject(list1,&(Enum.member?(list2,&1)))
-  end
 end

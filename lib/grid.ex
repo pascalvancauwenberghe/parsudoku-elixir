@@ -112,7 +112,7 @@ defmodule Sudoku.Grid do
 
   defp remove_possibilities(grid,values) do
     Enum.map(grid,&(if Cell.has_known_value?(&1), do: &1, else: Cell.cant_have_values(&1,values)))
-    |> remove_possibilities(diff(values,found_values(grid)))
+    |> remove_possibilities(values -- found_values(grid))
   end
 
   defp found_values(grid) do
@@ -120,7 +120,4 @@ defmodule Sudoku.Grid do
     |> Enum.map(&(Cell.value_of(&1)))
   end
 
-  defp diff(list1,list2) do
-    Enum.reject(list1,&(Enum.member?(list2,&1)))
-  end
 end
