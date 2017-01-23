@@ -12,27 +12,34 @@ defmodule Sudoku.Display do
       true
 
   """
+ 
+  @type display :: pid
+  @type t :: display
 
   use GenServer
 
 # Public API
 
+  @spec new :: display
   @doc "Construct a new Display"
   def new do
     {:ok,pid} = GenServer.start_link( Sudoku.Display, [])
     pid
   end
 
+  @spec solved?(display) :: boolean
   @doc "Returns whether Sudoku is solved"
   def solved?(display) do
     GenServer.call(display,:solved?)
   end
 
+   @spec received(display) :: [ {:found , role :: atom , from_region :: Sudoku.Region.region_name , Sudoku.Grid.result } ]
    @doc "Returns list of all received notifications in format {from_region_name , {row, column, value}} in order received"
    def received(display) do
      GenServer.call(display,:received)
    end
 
+   @spec found(display,role :: atom, from_region :: Sudoku.Region.region_name, Sudoku.Grid.result) :: :ok
    @doc "Notification from region with given role and name that a value {row, column, value} was found"
    def found(display,role,name,value) do 
      GenServer.cast(display,{:found, role, name, value})
