@@ -11,17 +11,4 @@ defmodule ParSudokuTest do
     assert Sudoku.Region.known_values(region_a) == [ {1,2,3} ]
   end
 
-  test "Helper function can more easily create region init" do
-
-  end
-
-  defp region_initial(name,values) do
-      if value != "_", do: { name , {row, column, String.to_integer(value) } }
-    end
-  end
-
-  defp slot(row,column) do
-    (row - 1) * 3 + (column - 1)
-  end
-
 end
