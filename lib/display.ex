@@ -1,7 +1,7 @@
 defmodule Sudoku.Display do
   @moduledoc """
     A Display collects results from `Sudoku.Region`.
-    
+
     It implementes the `Sudoku.Notifyable` behaviour
 
       iex> display = Sudoku.Display.new
@@ -26,7 +26,7 @@ defmodule Sudoku.Display do
   @spec new :: display
   @doc "Construct a new Display"
   def new do
-    {:ok,pid} = GenServer.start_link( Sudoku.Display, [])
+    {:ok,pid} = GenServer.start_link( Sudoku.Display, { [] , nil , nil} )
     pid
   end
 
@@ -48,19 +48,33 @@ defmodule Sudoku.Display do
      GenServer.cast(display,{:found, role, name, value})
    end
 
+   @spec when_done_notify(display,pid,any) :: :ok
+   @doc "When all values are known, the given message is sent to the receiver"
+   def when_done_notify(display,receiver,message) do
+     GenServer.call(display,{:notify,{receiver,message}})
+   end
+
   
 # GenServer callbacks
 
-  def handle_call(:solved?,_from,state) do
-    {:reply ,  length(state) == 81 , state }
+  def handle_call(:solved?,_from,{received,_receiver,_message}=state) do
+    {:reply ,  length(received) == 81 , state }
   end
 
-  def handle_call(:received,_from,state) do
-     {:reply , Enum.reverse(state) , state }
+  def handle_call(:received,_from,{received,_receiver,_message}=state) do
+     {:reply , Enum.reverse(received) , state }
   end
 
-  def handle_cast({:found, _role, name, value},state) do
-    {:noreply , [{name,value}|state] }
+  def handle_call({:notify,{receiver,message}},_from,{received,_receiver,_message}) do
+    { :reply, :ok , {received,receiver,message} }
+  end
+
+  def handle_cast({:found, _role, name, value},{received,receiver,message}) do
+    received = [{name,value}|received]
+    if length(received) == 81 && receiver != nil do 
+      send receiver,message
+    end
+    {:noreply , { received , receiver,message}}
   end
 
  end
