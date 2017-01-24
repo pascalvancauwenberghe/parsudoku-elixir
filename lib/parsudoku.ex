@@ -20,7 +20,8 @@ defmodule ParSudoku do
   end
 
   def solve({display,[a,b,c,d,e,f,g,h,i]}) do
-    
+    Sudoku.Display.when_done_notify(display,self(),:done)
+
     Sudoku.Region.notify(a, [ {:display, display}, {:west , c} , {:east, b} , {:north, g} , {:south, d}])
     Sudoku.Region.notify(b, [ {:display, display}, {:west , a} , {:east, c} , {:north, h} , {:south, e}])
     Sudoku.Region.notify(c, [ {:display, display}, {:west , b} , {:east, a} , {:north, i} , {:south, f}])
@@ -30,5 +31,12 @@ defmodule ParSudoku do
     Sudoku.Region.notify(g, [ {:display, display}, {:west , i} , {:east, h} , {:north, d} , {:south, a}])
     Sudoku.Region.notify(h, [ {:display, display}, {:west , g} , {:east, i} , {:north, e} , {:south, b}])
     Sudoku.Region.notify(i, [ {:display, display}, {:west , h} , {:east, g} , {:north, f} , {:south, c}])
+
+    result = receive do
+      :done -> :ok
+      after 5000 -> :notok
+    end
+
+    { result , Sudoku.Display.received(display) }
   end
 end
