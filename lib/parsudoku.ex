@@ -2,12 +2,37 @@ defmodule ParSudoku do
    @moduledoc """
     The ParSudoku creates the full Sudoku puzzle from 9 `Sudoku.Region`.
 
-      iex> { _display , regions } = ParSudoku.new([ { "A" , {1,2,3}} ])
-      iex> length(regions)
-      9
-
+      iex> problem = ParSudoku.parse_sudoku(["1_2|546|_3_", 
+      ...>                                   "___|2__|__6", 
+      ...>                                   "5_9|_71|_4_", 
+      ...>                                   "-----------", 
+      ...>                                   "___|93_|6_4",
+      ...>                                   "___|1_8|___", 
+      ...>                                   "9_6|_24|___", 
+      ...>                                   "-----------", 
+      ...>                                   "_7_|45_|2_8", 
+      ...>                                   "3__|__2|___",
+      ...>                                   "_4_|697|5_3"])
+      iex> puzzle = ParSudoku.new(problem)
+      iex> {result , values } = ParSudoku.solve(puzzle)
+      iex> result
+      :ok
+      iex> ParSudoku.generate_sudoku(values) == ["182|546|739", 
+      ...>                                         "734|289|156", 
+      ...>                                         "569|371|842", 
+      ...>                                         "-----------", 
+      ...>                                         "817|935|624",
+      ...>                                         "423|168|975", 
+      ...>                                         "956|724|381", 
+      ...>                                         "-----------", 
+      ...>                                         "671|453|298", 
+      ...>                                         "395|812|467",
+      ...>                                         "248|697|513"]
+      true
    """
+  @type puzzle :: { Sudoku.Display.t , [ Sudoku.Region.t] }
 
+  @spec new(Sudoku.Display.resultlist) :: puzzle
   @doc "Create a new puzzle with known initial values [{ region_name, Grid.result} ]"
   def new(initial) do
     regions = for char <- ?A .. ?I do
@@ -19,6 +44,8 @@ defmodule ParSudoku do
     { display , regions }
   end
 
+  @spec solve(puzzle) :: { atom , Sudoku.Display.resultlist }
+  @doc "Solve the Sudoku and return either a {:ok , Sudoku.Display.resultlist} when solved, otherwise {:notok , Sudoku.Display.resultlist}"
   def solve({display,[a,b,c,d,e,f,g,h,i]}) do
     Sudoku.Display.when_done_notify(display,self(),:done)
 
@@ -40,6 +67,8 @@ defmodule ParSudoku do
     { result , Sudoku.Display.received(display) }
   end
 
+ @spec generate_sudoku(Sudoku.Display.resultlist) :: [ String.t ]
+ @doc "Transform Sudoku.Display.resultlist into a list of strings, one per line of the Sudoku with a separator line between Regions"
  def generate_sudoku(results) do
     generate_three_regions(?A,results) ++
     [ "-----------" ] ++
@@ -48,6 +77,8 @@ defmodule ParSudoku do
     generate_three_regions(?G,results)
   end
 
+ @spec parse_sudoku([ String.t ]) :: Sudoku.Display.resultlist
+ @doc "Transform a list of strings, one per line of the Sudoku with a separator line between Regions into a Sudoku.Display.resultlist"
   def parse_sudoku([row1,row2,row3,_separator1,row4,row5,row6,_separator2,row7,row8,row9]) do
     three_regions(?A,[row1,row2,row3]) ++
     three_regions(?D,[row4,row5,row6]) ++
