@@ -22,21 +22,6 @@ defmodule ParSudokuTest do
     assert !Sudoku.Display.solved?(display)
   end
 
-
-  test "Helper function can more easily create region init" do
-    initial = region_initial("C","1_9_2___3")
-
-    assert initial == [ { "C" , {1,1,1}}, { "C" , {1,3,9}}, { "C" , {2,2,2}}, { "C" , {3,3,3}} ]
-  end
-
-
-  test "Helper function to create a set of regions" do
-    initial = regions_initial(["1_2___5_9", "5462___71", "_3___6_4_" ])
-    assert initial == [ { "A" ,{1, 1, 1}}, {"A", {1, 3, 2}}, {"A", {3, 1, 5}}, {"A", {3, 3, 9}} , 
-                        { "B", {1, 1, 5}}, {"B", {1, 2, 4}}, {"B", {1, 3, 6}}, {"B", {2, 1, 2}}, {"B", {3, 2, 7}}, {"B", {3, 3, 1}}, 
-                        { "C", {1, 2, 3}}, {"C", {2, 3, 6}}, {"C", {3, 2, 4}}]
-  end
-
   test "Helper function to initialize a row of 3 regions" do
     initial = three_regions(?A, ["1_2|546|_3_",
                                  "___|2__|__6",
@@ -50,19 +35,7 @@ defmodule ParSudokuTest do
 
 
   test "Helper function to initialize a 3x3 regions full Sudoku" do
-    initial = parse_sudoku(["1_2|546|_3_",
-                            "___|2__|__6",
-                            "5_9|_71|_4_",
-                            "-----------",
-                            "___|93_|6_4",
-                            "___|1_8|___",
-                            "9_6|_24|___",
-                            "-----------",
-                            "_7_|45_|2_8",
-                            "3__|__2|___",
-                            "_4_|697|5_3"])
-
-    assert initial ==  
+    assert simple_sudoku() ==  
        [{"A", {1, 1, 1}}, {"A", {1, 3, 2}}, {"A", {3, 1, 5}}, {"A", {3, 3, 9}}, 
         {"B", {1, 1, 5}}, {"B", {1, 2, 4}}, {"B", {1, 3, 6}}, {"B", {2, 1, 2}}, {"B", {3, 2, 7}}, {"B", {3, 3, 1}}, 
         {"C", {1, 2, 3}}, {"C", {2, 3, 6}}, {"C", {3, 2, 4}}, 
@@ -76,33 +49,17 @@ defmodule ParSudokuTest do
 
   # http://www.websudoku.com/?level=1&set_id=7439188610
   defp simple_sudoku do
-     regions_initial(["1_2___5_9", "5462___71", "_3___6_4_", 
-                      "______9_6", "93_1_8_24", "6_4______",
-                      "_7_3___4_", "45___2697", "2_8___5_3"
-                     ])
-  end
-
-  defp regions_initial(values) do
-    parse_regions(values,?A)
-  end
-
-
-  defp parse_regions([],_char) do
-    []
-  end
-  
-  defp parse_regions([hd|tl],char) do
-    region_initial(<< char >>,hd) ++ parse_regions(tl,char+1)
-  end
-
-
-  defp region_initial(name,values) do
-    for row <- 1..3 , column <- 1..3 do
-      value = String.at(values,slot(row,column))
-      if value != "_", do: { name , {row, column, String.to_integer(value) } }
-    end
-    |> Enum.filter(&(&1 != nil))
-  end
+    parse_sudoku(["1_2|546|_3_",
+                  "___|2__|__6",
+                  "5_9|_71|_4_",
+                  "-----------",
+                  "___|93_|6_4",
+                  "___|1_8|___",
+                  "9_6|_24|___",
+                  "-----------",
+                  "_7_|45_|2_8",
+                  "3__|__2|___",
+                  "_4_|697|5_3"])  end
 
   defp parse_sudoku([row1,row2,row3,_separator1,row4,row5,row6,_separator2,row7,row8,row9]) do
     three_regions(?A,[row1,row2,row3]) ++
@@ -133,10 +90,6 @@ defmodule ParSudokuTest do
       if value != "_", do: { << name >>, {row, column, String.to_integer(value) } }
     end
     |> Enum.filter(&(&1 != nil))
-  end
-
-  defp slot(row,column) do
-    (row - 1) * 3 + (column - 1)
   end
 
 end
