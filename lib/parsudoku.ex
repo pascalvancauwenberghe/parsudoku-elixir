@@ -18,4 +18,17 @@ defmodule ParSudoku do
     display = Sudoku.Display.new
     { display , regions }
   end
+
+  def solve({display,[a,b,c,d,e,f,g,h,i]}) do
+    
+    Sudoku.Region.notify(a, [ {:display, display}, {:west , c} , {:east, b} , {:north, g} , {:south, d}])
+    Sudoku.Region.notify(b, [ {:display, display}, {:west , a} , {:east, c} , {:north, h} , {:south, e}])
+    Sudoku.Region.notify(c, [ {:display, display}, {:west , b} , {:east, a} , {:north, i} , {:south, f}])
+    Sudoku.Region.notify(d, [ {:display, display}, {:west , f} , {:east, e} , {:north, a} , {:south, g}])
+    Sudoku.Region.notify(e, [ {:display, display}, {:west , d} , {:east, f} , {:north, b} , {:south, h}])
+    Sudoku.Region.notify(f, [ {:display, display}, {:west , e} , {:east, d} , {:north, c} , {:south, i}])
+    Sudoku.Region.notify(g, [ {:display, display}, {:west , i} , {:east, h} , {:north, d} , {:south, a}])
+    Sudoku.Region.notify(h, [ {:display, display}, {:west , g} , {:east, i} , {:north, e} , {:south, b}])
+    Sudoku.Region.notify(i, [ {:display, display}, {:west , h} , {:east, g} , {:north, f} , {:south, c}])
+  end
 end

@@ -21,6 +21,17 @@ defmodule ParSudokuTest do
     assert Sudoku.Region.known_values(region_i) == [ {1,1,2}, {1,3,8}, {3,1,5}, {3,3,3} ]
     assert !Sudoku.Display.solved?(display)
   end
+  
+  test "Parsudoku starts constraint satisfaction" do
+    {display, regions} = ParSudoku.new(simple_sudoku())
+
+    ParSudoku.solve({display,regions})
+
+    Process.sleep(5000)
+    IO.inspect length(Sudoku.Display.received(display))
+
+    assert Sudoku.Display.solved?(display)
+  end
 
   test "Helper function to initialize a row of 3 regions" do
     initial = three_regions(?A, ["1_2|546|_3_",
