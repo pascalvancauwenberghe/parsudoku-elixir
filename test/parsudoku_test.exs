@@ -23,14 +23,26 @@ defmodule ParSudokuTest do
   end
   
   test "Parsudoku starts constraint satisfaction" do
-    {display, regions} = ParSudoku.new(simple_sudoku())
+    {display,regions} = ParSudoku.new(simple_sudoku())
 
     ParSudoku.solve({display,regions})
 
-    Process.sleep(5000)
-    IO.inspect length(Sudoku.Display.received(display))
+    wait_until_solved(display,50)
 
     assert Sudoku.Display.solved?(display)
+    assert length(Sudoku.Display.received(display)) == 81
+  end
+
+  defp wait_until_solved(_display,0) do
+    
+  end
+
+  defp wait_until_solved(display,count) do
+    Process.sleep(100)
+    case Sudoku.Display.solved?(display) do
+      false -> wait_until_solved(display,count-1)
+      true ->  true
+    end
   end
 
   test "Helper function to initialize a row of 3 regions" do
