@@ -14,7 +14,7 @@ defmodule ParSudokuTest do
   end
 
   test "Parsudoku creates easy sudoku" do
-    {display, regions} = ParSudoku.new(parse_sudoku(simple_sudoku_problem()))
+    {display, regions} = ParSudoku.new(ParSudoku.parse_sudoku(simple_sudoku_problem()))
 
     region_i = Enum.at(regions,8)
 
@@ -23,29 +23,17 @@ defmodule ParSudokuTest do
   end
   
   test "Parsudoku starts constraint satisfaction" do
-    {display,regions} = ParSudoku.new(parse_sudoku(simple_sudoku_problem()))
+    {display,regions} = ParSudoku.new(ParSudoku.parse_sudoku(simple_sudoku_problem()))
 
     {result,received} = ParSudoku.solve({display,regions})
 
     assert result == :ok
     assert length(received) == 81
-    assert generate_sudoku(received) == simple_sudoku_solution()
+    assert ParSudoku.generate_sudoku(received) == simple_sudoku_solution()
   end
-
-  test "Helper function to initialize a row of 3 regions" do
-    initial = three_regions(?A, ["1_2|546|_3_",
-                                 "___|2__|__6",
-                                 "5_9|_71|_4_"])
-
-    assert initial == [ { "A" ,{1, 1, 1}}, {"A", {1, 3, 2}}, {"A", {3, 1, 5}}, {"A", {3, 3, 9}} , 
-                        { "B", {1, 1, 5}}, {"B", {1, 2, 4}}, {"B", {1, 3, 6}}, {"B", {2, 1, 2}}, {"B", {3, 2, 7}}, {"B", {3, 3, 1}}, 
-                        { "C", {1, 2, 3}}, {"C", {2, 3, 6}}, {"C", {3, 2, 4}}]
-  
-  end
-
 
   test "Helper function to initialize a 3x3 regions full Sudoku" do
-    assert parse_sudoku(simple_sudoku_problem()) ==  
+    assert ParSudoku.parse_sudoku(simple_sudoku_problem()) ==  
        [{"A", {1, 1, 1}}, {"A", {1, 3, 2}}, {"A", {3, 1, 5}}, {"A", {3, 3, 9}}, 
         {"B", {1, 1, 5}}, {"B", {1, 2, 4}}, {"B", {1, 3, 6}}, {"B", {2, 1, 2}}, {"B", {3, 2, 7}}, {"B", {3, 3, 1}}, 
         {"C", {1, 2, 3}}, {"C", {2, 3, 6}}, {"C", {3, 2, 4}}, 
@@ -58,9 +46,9 @@ defmodule ParSudokuTest do
   end
 
   test "Helper function to convert list of results back into Sudoku" do
-    results = parse_sudoku(simple_sudoku_problem())  
+    results = ParSudoku.parse_sudoku(simple_sudoku_problem())  
 
-    assert generate_sudoku(results) == simple_sudoku_problem()
+    assert ParSudoku.generate_sudoku(results) == simple_sudoku_problem()
   end
 
   # Sudoku from http://www.websudoku.com/?level=1&set_id=7439188610
@@ -92,63 +80,5 @@ defmodule ParSudokuTest do
     "248|697|513"]
   end
 
-  defp generate_sudoku(results) do
-    generate_three_regions(?A,results) ++
-    [ "-----------" ] ++
-    generate_three_regions(?D,results) ++
-    [ "-----------" ] ++
-    generate_three_regions(?G,results)
-  end
-
-  defp generate_three_regions(first,results) do
-    for row <- 1..3 do
-      generate_region_row(first,row,results) <> "|" <>
-      generate_region_row(first+1,row,results) <> "|" <>
-      generate_region_row(first+2,row,results)
-    end
-  end
-
-  defp generate_region_row(region_name,row,results) do
-    region = << region_name >>
-    for column <- 1..3 do
-      item = Enum.find(results,fn({name,{thisrow,thiscolumn,_value}}) -> name == region && thisrow == row && thiscolumn == column end)
-      case item do
-        nil -> "_"
-        {_name,{_row,_column,value}} -> << ?0 + value >>
-      end
-    end
-    |> Enum.reduce("",fn(value,acc) -> acc <> value end)
-  end
-
-  defp parse_sudoku([row1,row2,row3,_separator1,row4,row5,row6,_separator2,row7,row8,row9]) do
-    three_regions(?A,[row1,row2,row3]) ++
-    three_regions(?D,[row4,row5,row6]) ++
-    three_regions(?G,[row7,row8,row9])  
-  end
-
-  defp three_regions(firstname,[row1,row2,row3]) do
-    three_region_row(firstname,1,row1) ++
-    three_region_row(firstname,2,row2) ++
-    three_region_row(firstname,3,row3)
-    |> Enum.sort_by(fn({name, { row, column, _value }}) -> name <> << ?1 + row , ?1 + column >> end)
-  end
-
-  defp three_region_row(firstname,row,description) do
-    cell1 = String.slice(description,0..2)
-    cell2 = String.slice(description,4..6)
-    cell3 = String.slice(description,8..10)
-
-    cell_values(firstname  ,row,cell1) ++
-    cell_values(firstname+1,row,cell2) ++
-    cell_values(firstname+2,row,cell3)
-  end
-
-  defp cell_values(name,row,description) do
-    for column <- 1..3 do
-      value = String.at(description,column-1)
-      if value != "_", do: { << name >>, {row, column, String.to_integer(value) } }
-    end
-    |> Enum.filter(&(&1 != nil))
-  end
 
 end

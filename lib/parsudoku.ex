@@ -39,4 +39,64 @@ defmodule ParSudoku do
 
     { result , Sudoku.Display.received(display) }
   end
+
+ def generate_sudoku(results) do
+    generate_three_regions(?A,results) ++
+    [ "-----------" ] ++
+    generate_three_regions(?D,results) ++
+    [ "-----------" ] ++
+    generate_three_regions(?G,results)
+  end
+
+  def parse_sudoku([row1,row2,row3,_separator1,row4,row5,row6,_separator2,row7,row8,row9]) do
+    three_regions(?A,[row1,row2,row3]) ++
+    three_regions(?D,[row4,row5,row6]) ++
+    three_regions(?G,[row7,row8,row9])  
+  end
+
+  defp generate_three_regions(first,results) do
+    for row <- 1..3 do
+      generate_region_row(first,row,results) <> "|" <>
+      generate_region_row(first+1,row,results) <> "|" <>
+      generate_region_row(first+2,row,results)
+    end
+  end
+
+  defp generate_region_row(region_name,row,results) do
+    region = << region_name >>
+    for column <- 1..3 do
+      item = Enum.find(results,fn({name,{thisrow,thiscolumn,_value}}) -> name == region && thisrow == row && thiscolumn == column end)
+      case item do
+        nil -> "_"
+        {_name,{_row,_column,value}} -> << ?0 + value >>
+      end
+    end
+    |> Enum.reduce("",fn(value,acc) -> acc <> value end)
+  end
+
+  defp three_regions(firstname,[row1,row2,row3]) do
+    three_region_row(firstname,1,row1) ++
+    three_region_row(firstname,2,row2) ++
+    three_region_row(firstname,3,row3)
+    |> Enum.sort_by(fn({name, { row, column, _value }}) -> name <> << ?1 + row , ?1 + column >> end)
+  end
+
+  defp three_region_row(firstname,row,description) do
+    cell1 = String.slice(description,0..2)
+    cell2 = String.slice(description,4..6)
+    cell3 = String.slice(description,8..10)
+
+    cell_values(firstname  ,row,cell1) ++
+    cell_values(firstname+1,row,cell2) ++
+    cell_values(firstname+2,row,cell3)
+  end
+
+  defp cell_values(name,row,description) do
+    for column <- 1..3 do
+      value = String.at(description,column-1)
+      if value != "_", do: { << name >>, {row, column, String.to_integer(value) } }
+    end
+    |> Enum.filter(&(&1 != nil))
+  end
+
 end
