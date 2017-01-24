@@ -14,7 +14,7 @@ defmodule ParSudokuTest do
   end
 
   test "Parsudoku creates easy sudoku" do
-    {display, regions} = ParSudoku.new(simple_sudoku())
+    {display, regions} = ParSudoku.new(parse_sudoku(simple_sudoku_problem()))
 
     region_i = Enum.at(regions,8)
 
@@ -23,12 +23,13 @@ defmodule ParSudokuTest do
   end
   
   test "Parsudoku starts constraint satisfaction" do
-    {display,regions} = ParSudoku.new(simple_sudoku())
+    {display,regions} = ParSudoku.new(parse_sudoku(simple_sudoku_problem()))
 
     {result,received} = ParSudoku.solve({display,regions})
 
     assert result == :ok
     assert length(received) == 81
+    assert generate_sudoku(received) == simple_sudoku_solution()
   end
 
   test "Helper function to initialize a row of 3 regions" do
@@ -44,7 +45,7 @@ defmodule ParSudokuTest do
 
 
   test "Helper function to initialize a 3x3 regions full Sudoku" do
-    assert simple_sudoku() ==  
+    assert parse_sudoku(simple_sudoku_problem()) ==  
        [{"A", {1, 1, 1}}, {"A", {1, 3, 2}}, {"A", {3, 1, 5}}, {"A", {3, 3, 9}}, 
         {"B", {1, 1, 5}}, {"B", {1, 2, 4}}, {"B", {1, 3, 6}}, {"B", {2, 1, 2}}, {"B", {3, 2, 7}}, {"B", {3, 3, 1}}, 
         {"C", {1, 2, 3}}, {"C", {2, 3, 6}}, {"C", {3, 2, 4}}, 
@@ -56,19 +57,68 @@ defmodule ParSudokuTest do
         {"I", {1, 1, 2}}, {"I", {1, 3, 8}}, {"I", {3, 1, 5}}, {"I", {3, 3, 3}}] 
   end
 
-  # http://www.websudoku.com/?level=1&set_id=7439188610
-  defp simple_sudoku do
-    parse_sudoku(["1_2|546|_3_",
-                  "___|2__|__6",
-                  "5_9|_71|_4_",
-                  "-----------",
-                  "___|93_|6_4",
-                  "___|1_8|___",
-                  "9_6|_24|___",
-                  "-----------",
-                  "_7_|45_|2_8",
-                  "3__|__2|___",
-                  "_4_|697|5_3"])  end
+  test "Helper function to convert list of results back into Sudoku" do
+    results = parse_sudoku(simple_sudoku_problem())  
+
+    assert generate_sudoku(results) == simple_sudoku_problem()
+  end
+
+  # Sudoku from http://www.websudoku.com/?level=1&set_id=7439188610
+  def simple_sudoku_problem do
+    ["1_2|546|_3_",
+     "___|2__|__6",
+     "5_9|_71|_4_",
+     "-----------",
+     "___|93_|6_4",
+     "___|1_8|___",
+     "9_6|_24|___",
+     "-----------",
+     "_7_|45_|2_8",
+     "3__|__2|___",
+     "_4_|697|5_3"]
+  end
+
+  def simple_sudoku_solution do
+   ["182|546|739", 
+    "734|289|156", 
+    "569|371|842", 
+    "-----------", 
+    "817|935|624",
+    "423|168|975", 
+    "956|724|381", 
+    "-----------", 
+    "671|453|298", 
+    "395|812|467",
+    "248|697|513"]
+  end
+
+  defp generate_sudoku(results) do
+    generate_three_regions(?A,results) ++
+    [ "-----------" ] ++
+    generate_three_regions(?D,results) ++
+    [ "-----------" ] ++
+    generate_three_regions(?G,results)
+  end
+
+  defp generate_three_regions(first,results) do
+    for row <- 1..3 do
+      generate_region_row(first,row,results) <> "|" <>
+      generate_region_row(first+1,row,results) <> "|" <>
+      generate_region_row(first+2,row,results)
+    end
+  end
+
+  defp generate_region_row(region_name,row,results) do
+    region = << region_name >>
+    for column <- 1..3 do
+      item = Enum.find(results,fn({name,{thisrow,thiscolumn,_value}}) -> name == region && thisrow == row && thiscolumn == column end)
+      case item do
+        nil -> "_"
+        {_name,{_row,_column,value}} -> << ?0 + value >>
+      end
+    end
+    |> Enum.reduce("",fn(value,acc) -> acc <> value end)
+  end
 
   defp parse_sudoku([row1,row2,row3,_separator1,row4,row5,row6,_separator2,row7,row8,row9]) do
     three_regions(?A,[row1,row2,row3]) ++
