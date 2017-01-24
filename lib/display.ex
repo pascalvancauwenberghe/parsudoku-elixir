@@ -17,6 +17,8 @@ defmodule Sudoku.Display do
  
   @type display :: pid
   @type t :: display
+  @type result :: {from_region :: Sudoku.Region.region_name , Sudoku.Grid.result }
+  @type resultlist :: [result]
 
   use GenServer
   @behaviour Sudoku.Notifyable
@@ -36,7 +38,7 @@ defmodule Sudoku.Display do
     GenServer.call(display,:solved?)
   end
 
-   @spec received(display) :: [ {:found , role :: atom , from_region :: Sudoku.Region.region_name , Sudoku.Grid.result } ]
+   @spec received(display) :: resultlist
    @doc "Returns list of all received notifications in format {from_region_name , {row, column, value}} in order received"
    def received(display) do
      GenServer.call(display,:received)
