@@ -22,7 +22,7 @@ defmodule ParSudokuTest do
     assert !Sudoku.Display.solved?(display)
   end
   
-  test "Parsudoku starts constraint satisfaction" do
+  test "Parsudoku solves easy sudoku" do
     {display,regions} = ParSudoku.new(ParSudoku.parse_sudoku(simple_sudoku_problem()))
 
     {result,received} = ParSudoku.solve({display,regions})
@@ -30,6 +30,16 @@ defmodule ParSudokuTest do
     assert result == :ok
     assert length(received) == 81
     assert ParSudoku.generate_sudoku(received) == simple_sudoku_solution()
+  end
+
+  test "Parsudoku solves medium sudoku" do
+    puzzle = ParSudoku.new(ParSudoku.parse_sudoku(medium_sudoku_problem()))
+
+    {result,received} = ParSudoku.solve(puzzle)
+
+    assert length(received) == 81
+    assert result == :ok
+    assert ParSudoku.generate_sudoku(received) == medium_sudoku_solution()
   end
 
   test "Helper function to initialize a 3x3 regions full Sudoku" do
@@ -80,5 +90,32 @@ defmodule ParSudokuTest do
     "248|697|513"]
   end
 
+  # Sudoku from http://www.websudoku.com/?level=2&set_id=6792943988
+  def medium_sudoku_problem do
+    ["9__|7__|__1",
+     "7_5|_61|___",
+     "18_|__2|657",
+     "-----------",
+     "_4_|__9|___",
+     "__7|___|9__",
+     "___|4__|_8_",
+     "-----------",
+     "612|5__|_49",
+     "___|94_|1_8",
+     "4__|__3|__5"]
+  end
 
+  def medium_sudoku_solution do
+    ["926|754|831", 
+     "735|861|492", 
+     "184|392|657", 
+     "-----------",
+     "241|689|573", 
+     "867|235|914", 
+     "359|417|286", 
+     "-----------",
+     "612|578|349", 
+     "573|946|128", 
+     "498|123|765"]
+  end
 end
