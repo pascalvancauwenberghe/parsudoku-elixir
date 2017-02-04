@@ -104,11 +104,12 @@ defmodule Sudoku.Grid do
 
   defp apply_rules(grid) do
     grid 
-    |> apply_unique_constraint()
-    |> apply_single_value_constraint()
+    |> apply_unique_value_constraint()
+    |> apply_unique_possibility_constraint()
   end
 
-  defp apply_unique_constraint(grid) do
+  # If a cell has a known value, no other cell can have that value
+  defp apply_unique_value_constraint(grid) do
     remove_possibilities(grid,found_values(grid))
   end
 
@@ -126,28 +127,17 @@ defmodule Sudoku.Grid do
     |> Enum.map(&(Cell.value_of(&1)))
   end
 
-  defp apply_single_value_constraint(grid) do
+  # If a cell has a possibility that is not possible in any other cell, then that must be its value
+  defp apply_unique_possibility_constraint(grid) do
     grid
-    |> Enum.map(fn(cell) -> simplify_cell(grid,cell) end)
+    |> Enum.map(&(if Cell.has_known_value?(&1), do: &1, else: find_unique_possibility_in(grid,&1)))
   end
 
-  defp simplify_cell(grid,cell) do
-    if Cell.has_known_value?(cell) do
-      cell
-    else
-      simplify_cell_values(grid,cell)
-    end
-  end
-
-  defp simplify_cell_values(grid,cell) do
+  defp find_unique_possibility_in(grid,cell) do
     row = Cell.row(cell)
     column = Cell.column(cell)
-    unique = Enum.find(Cell.values(cell),fn(value) -> !find_value(grid,row,column,value) end)
-    if unique == nil do
-      cell
-    else
-      Cell.with_known_value(row,column,unique)
-    end
+    unique = Enum.find(Cell.values(cell),&(!find_value(grid,row,column,&1)))
+    if unique == nil, do: cell, else: Cell.with_known_value(row,column,unique)
   end
 
   defp find_value(grid,row,column,value) do
