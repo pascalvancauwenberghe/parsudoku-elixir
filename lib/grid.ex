@@ -48,7 +48,7 @@ defmodule Sudoku.Grid do
   def has_known_value(grid,row,column,value) do
     position = slot(row,column)
     cell = Enum.at(grid,position) |> Cell.set_value(value)
-    List.replace_at(grid,position,cell) |> apply_unique_constraint()
+    List.replace_at(grid,position,cell) |> apply_rules()
   end
 
   @spec cell(grid,Sudoku.Cell.row,Sudoku.Cell.column) :: Sudoku.Cell.t
@@ -62,21 +62,21 @@ defmodule Sudoku.Grid do
   def cant_have_value(grid,row,column,value) do
     position = slot(row,column)
     cell = Enum.at(grid,position) |> Cell.cant_have_value(value)
-    List.replace_at(grid,position,cell) |> apply_unique_constraint()
+    List.replace_at(grid,position,cell) |> apply_rules()
   end
 
   @spec cant_have_value_in_row(grid,Sudoku.Cell.row,Sudoku.Domain.value) :: grid
   @doc "Return a grid where the given value is not possible in the given row"
   def cant_have_value_in_row(grid,row,value) do
     Enum.map(grid,fn(cell) -> if Cell.row(cell) == row, do: Cell.cant_have_value(cell,value), else: cell end)
-    |> apply_unique_constraint()
+    |> apply_rules()
   end
   
   @spec cant_have_value_in_column(grid,Sudoku.Cell.column,Sudoku.Domain.value) :: grid
   @doc "Return a grid where the given value is not possible in the given column"
   def cant_have_value_in_column(grid,column,value) do
     Enum.map(grid,fn(cell) -> if Cell.column(cell) == column, do: Cell.cant_have_value(cell,value), else: cell end)
-    |> apply_unique_constraint()
+    |> apply_rules()
   end
   
   @spec known_values(grid) :: resultlist
@@ -102,6 +102,12 @@ defmodule Sudoku.Grid do
     (row-1) * @columns + (column-1)
   end
 
+  defp apply_rules(grid) do
+    grid 
+    |> apply_unique_constraint()
+    |> apply_single_value_constraint()
+  end
+
   defp apply_unique_constraint(grid) do
     remove_possibilities(grid,found_values(grid))
   end
@@ -120,4 +126,33 @@ defmodule Sudoku.Grid do
     |> Enum.map(&(Cell.value_of(&1)))
   end
 
+  defp apply_single_value_constraint(grid) do
+    grid
+    |> Enum.map(fn(cell) -> simplify_cell(grid,cell) end)
+  end
+
+  defp simplify_cell(grid,cell) do
+    if Cell.has_known_value?(cell) do
+      cell
+    else
+      simplify_cell_values(grid,cell)
+    end
+  end
+
+  defp simplify_cell_values(grid,cell) do
+    row = Cell.row(cell)
+    column = Cell.column(cell)
+    unique = Enum.find(Cell.values(cell),fn(value) -> !find_value(grid,row,column,value) end)
+    if unique == nil do
+      cell
+    else
+      Cell.with_known_value(row,column,unique)
+    end
+  end
+
+  defp find_value(grid,row,column,value) do
+    grid 
+    |> Enum.filter(fn(cell) -> Cell.row(cell) != row || Cell.column(cell) != column end)
+    |> Enum.any?(fn(cell) -> Cell.can_have_value?(cell,value) end)
+  end
 end

@@ -116,7 +116,7 @@ defmodule Sudoku.Cell do
     end
 
     @spec values(cell) :: Sudoku.Domain.valuelist
-    defp values(cell) do
+    def values(cell) do
       {_row,_column,values} = cell
       values
     end

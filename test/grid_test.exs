@@ -141,4 +141,19 @@ defmodule GridTest do
     end
   end
 
+  test "When a cell is the only one with a possibility, that is its value" do
+    grid = Sudoku.Grid.new 
+      |> Sudoku.Grid.has_known_value(1,1,1)
+      |> Sudoku.Grid.has_known_value(1,2,2)
+      |> Sudoku.Grid.has_known_value(1,3,3)
+      |> Sudoku.Grid.has_known_value(2,1,4)
+      |> Sudoku.Grid.has_known_value(2,2,5)
+      |> Sudoku.Grid.has_known_value(2,3,6)
+      |> Sudoku.Grid.cant_have_value(3,1,9)
+      |> Sudoku.Grid.cant_have_value(3,2,9)
+
+    assert Sudoku.Grid.cell(grid,3,3) |> Sudoku.Cell.has_known_value?
+    assert Sudoku.Grid.cell(grid,3,3) |> Sudoku.Cell.value_of == 9
+  end
+
 end
